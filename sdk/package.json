@@ -1,0 +1,17 @@
+{
+  "name": "@cdn/sdk",
+  "version": "1.0.0",
+  "description": "TypeScript client for the Creative Design Networks public API",
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "index.ts",
+  "types": "index.ts",
+  "files": [
+    "index.ts",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "sideEffects": false
+}

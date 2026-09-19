@@ -1,0 +1,1123 @@
+<title>The Central Node Blueprint</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --void:#07070C; --panel:#0D0E17; --raise:#161930;
+  --line:#22253A; --line-soft:#191C2C;
+  --ink:#EDEEF7; --body:#C6C8DB; --muted:#8C8FA8; --dim:#5C5F78;
+  --cy:#2FD9F5; --vi:#8B5CF6; --or:#FF8A3D; --mg:#FF4D97; --li:#A3E635; --em:#2DD4BF;
+  --crit:#FF4D6D;
+  --maxw:1180px;
+  --s1:.25rem; --s2:.5rem; --s3:.75rem; --s4:1rem; --s5:1.5rem; --s6:2rem; --s7:3rem; --s8:4.5rem;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--void); color:var(--body);
+  font-family:"Newsreader",Georgia,"Times New Roman",serif;
+  font-size:17px; line-height:1.68; font-weight:300;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(900px 500px at 12% -8%, #8B5CF61A, transparent 70%),
+    radial-gradient(760px 460px at 96% 4%, #2FD9F514, transparent 72%),
+    radial-gradient(700px 700px at 50% 120%, #FF8A3D0F, transparent 70%);
+  background-attachment:fixed;
+}
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 var(--s5) var(--s8)}
+.grid{display:grid; grid-template-columns:1fr; gap:var(--s6)}
+@media(min-width:1040px){ .grid{grid-template-columns:236px minmax(0,1fr); gap:var(--s8)} }
+
+.mast{padding:var(--s8) 0 var(--s6); border-bottom:1px solid var(--line)}
+.eyebrow{
+  font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.66rem; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--muted); display:flex; gap:var(--s3); flex-wrap:wrap; align-items:center;
+}
+.eyebrow b{color:var(--cy); font-weight:500}
+h1{
+  font-family:"Chakra Petch",system-ui,sans-serif; font-weight:700; color:var(--ink);
+  font-size:clamp(2.3rem,6.4vw,4.1rem); line-height:1.02; letter-spacing:-.015em;
+  margin:var(--s5) 0 var(--s4); text-wrap:balance; max-width:16ch;
+}
+h1 span{background:linear-gradient(96deg,var(--cy),var(--vi) 46%,var(--or)); -webkit-background-clip:text; background-clip:text; color:transparent}
+.standfirst{font-size:1.24rem; max-width:62ch; color:var(--body); line-height:1.6}
+.mastmeta{display:flex; flex-wrap:wrap; gap:var(--s5); margin-top:var(--s6);
+  font-family:"IBM Plex Mono",monospace; font-size:.72rem; color:var(--dim); letter-spacing:.05em}
+.mastmeta b{display:block; color:var(--ink); font-weight:500; font-size:.82rem; margin-top:2px; letter-spacing:0}
+
+.rail{align-self:start}
+@media(min-width:1040px){ .rail{position:sticky; top:var(--s5); max-height:calc(100vh - 3rem); overflow-y:auto; padding-right:var(--s3)} }
+.rail h2{font-family:"IBM Plex Mono",monospace; font-size:.64rem; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--dim); margin:0 0 var(--s3); font-weight:500}
+.rail ol{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:1px}
+.rail a{display:grid; grid-template-columns:1.9em 1fr; gap:.35em; text-decoration:none; color:var(--muted);
+  font-family:"Chakra Petch",sans-serif; font-size:.78rem; font-weight:500; line-height:1.3; padding:.34rem .4rem;
+  border-radius:3px; border-left:2px solid transparent}
+.rail a i{font-family:"IBM Plex Mono",monospace; font-style:normal; color:var(--dim); font-size:.68rem}
+.rail a:hover{color:var(--ink); background:#FFFFFF08; border-left-color:var(--cy)}
+.rail a:focus-visible{outline:2px solid var(--cy); outline-offset:1px}
+.railwrap>summary{display:none}
+@media(max-width:1039px){
+  .railwrap{border:1px solid var(--line); border-radius:6px; background:var(--panel); margin-top:var(--s6)}
+  .railwrap>summary{display:block; cursor:pointer; padding:var(--s3) var(--s4);
+    font-family:"IBM Plex Mono",monospace; font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink)}
+  .rail{padding:0 var(--s4) var(--s4)}
+}
+
+section{padding-top:var(--s7); scroll-margin-top:1rem}
+section+section{border-top:1px solid var(--line-soft); margin-top:var(--s6)}
+h2.sec{font-family:"Chakra Petch",sans-serif; font-weight:700; color:var(--ink);
+  font-size:clamp(1.5rem,3.2vw,2rem); line-height:1.12; letter-spacing:-.01em; margin:0 0 var(--s4);
+  display:grid; grid-template-columns:auto 1fr; gap:.7em; align-items:baseline; text-wrap:balance}
+h2.sec i{font-family:"IBM Plex Mono",monospace; font-style:normal; font-size:.72rem; font-weight:500;
+  color:var(--cy); letter-spacing:.1em; padding-top:.35em}
+h3{font-family:"Chakra Petch",sans-serif; font-weight:600; color:var(--ink); font-size:1.14rem;
+  letter-spacing:.005em; margin:var(--s6) 0 var(--s3)}
+h4{font-family:"IBM Plex Mono",monospace; font-weight:500; font-size:.7rem; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--muted); margin:var(--s5) 0 var(--s2)}
+p{margin:0 0 var(--s4); max-width:70ch}
+ul,ol.body{margin:0 0 var(--s4); padding-left:1.15em; max-width:70ch}
+li{margin-bottom:.4em}
+strong{color:var(--ink); font-weight:500}
+code{font-family:"IBM Plex Mono",monospace; font-size:.82em; color:var(--cy); background:#2FD9F512;
+  padding:.1em .35em; border-radius:3px; border:1px solid #2FD9F520}
+
+.tw{overflow-x:auto; margin:0 0 var(--s5); border:1px solid var(--line); border-radius:6px; background:var(--panel)}
+table{border-collapse:collapse; width:100%; min-width:660px; font-family:"IBM Plex Mono",monospace;
+  font-size:.76rem; line-height:1.5; font-variant-numeric:tabular-nums}
+th{text-align:left; font-weight:500; color:var(--muted); letter-spacing:.1em; text-transform:uppercase;
+  font-size:.62rem; padding:.7rem .8rem; border-bottom:1px solid var(--line); background:#FFFFFF05; white-space:nowrap}
+td{padding:.66rem .8rem; border-bottom:1px solid var(--line-soft); color:var(--body); vertical-align:top}
+tr:last-child td{border-bottom:0}
+td b{color:var(--ink); font-weight:500}
+table.tight{font-size:.71rem}
+
+.chip{display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:.6rem; font-weight:500;
+  letter-spacing:.12em; text-transform:uppercase; padding:.16em .5em; border-radius:3px; border:1px solid; white-space:nowrap}
+.must{color:var(--cy); border-color:#2FD9F550; background:#2FD9F512}
+.should{color:var(--vi); border-color:#8B5CF650; background:#8B5CF612}
+.could{color:var(--em); border-color:#2DD4BF50; background:#2DD4BF12}
+.soon{color:var(--or); border-color:#FF8A3D50; background:#FF8A3D12}
+.defer{color:var(--dim); border-color:#5C5F7850; background:#5C5F7812}
+.risk{color:var(--crit); border-color:#FF4D6D50; background:#FF4D6D12}
+
+.call{border:1px solid var(--line); border-left:2px solid var(--cy); background:var(--panel);
+  border-radius:0 6px 6px 0; padding:var(--s4) var(--s5); margin:0 0 var(--s5); max-width:74ch}
+.call p:last-child{margin-bottom:0}
+.call .lab{font-family:"IBM Plex Mono",monospace; font-size:.62rem; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--cy); display:block; margin-bottom:var(--s2)}
+.call.assume{border-left-color:var(--or)} .call.assume .lab{color:var(--or)}
+.call.hard{border-left-color:var(--crit)} .call.hard .lab{color:var(--crit)}
+.call.key{border-left-color:var(--li)} .call.key .lab{color:var(--li)}
+
+.specs{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:var(--s3); margin:0 0 var(--s5)}
+.spec{border:1px solid var(--line); border-radius:6px; background:var(--panel); padding:var(--s4) var(--s3);
+  display:flex; flex-direction:column; align-items:center; gap:var(--s3); text-align:center}
+.dot{width:52px; height:52px; border-radius:50%; border:2px solid var(--cy); background:#2FD9F50D;
+  box-shadow:0 0 0 3px #2FD9F510, 0 0 18px #2FD9F555; display:grid; place-items:center;
+  font-family:"IBM Plex Mono",monospace; font-size:.62rem; color:var(--cy); flex:none}
+.spec .nm{font-family:"Chakra Petch",sans-serif; font-size:.8rem; font-weight:600; color:var(--ink)}
+.spec .ds{font-family:"IBM Plex Mono",monospace; font-size:.6rem; color:var(--dim); line-height:1.45}
+.d-inactive{border-color:#3A3E58; color:#63668A; background:transparent; box-shadow:none}
+.d-soon{border-color:var(--or); border-style:dashed; color:var(--or); background:#FF8A3D0A; box-shadow:none}
+.d-sel{border-color:#fff; color:#fff; background:#8B5CF618; box-shadow:0 0 0 4px #FFFFFF1A, 0 0 26px #8B5CF6AA}
+.d-priv{border-color:var(--vi); color:var(--vi); background:#8B5CF60D; box-shadow:0 0 14px #8B5CF640}
+.d-admin{border-color:var(--li); color:var(--li); background:#A3E6350D; box-shadow:0 0 16px #A3E63545}
+.d-conn{border-color:#2FD9F566; color:#2FD9F5AA; background:transparent; box-shadow:0 0 8px #2FD9F526}
+.d-hub{border-color:transparent; color:#fff; background:conic-gradient(from 200deg,#2FD9F5,#8B5CF6,#FF4D97,#FF8A3D,#2FD9F5);
+  box-shadow:0 0 30px #8B5CF680}
+
+.pal{display:grid; grid-template-columns:repeat(auto-fill,minmax(116px,1fr)); gap:var(--s2); margin:0 0 var(--s5)}
+.sw{border:1px solid var(--line); border-radius:5px; overflow:hidden; background:var(--panel)}
+.sw .band{height:46px}
+.sw .meta{padding:.45rem .55rem; font-family:"IBM Plex Mono",monospace; font-size:.6rem; line-height:1.5}
+.sw .meta b{display:block; color:var(--ink); font-weight:500}
+.sw .meta span{color:var(--dim)}
+
+@media (prefers-reduced-motion:no-preference){
+  .rail a{transition:color .16s ease, background .16s ease, border-color .16s ease}
+}
+footer{border-top:1px solid var(--line); margin-top:var(--s8); padding-top:var(--s5);
+  font-family:"IBM Plex Mono",monospace; font-size:.68rem; color:var(--dim); letter-spacing:.06em; line-height:1.7}
+</style>
+
+<div class="wrap">
+<header class="mast">
+  <div class="eyebrow"><b>Creative Design Networks</b><span>/</span><span>MVP design &amp; implementation blueprint</span><span>/</span><span>v1.0</span></div>
+  <h1>The <span>Central Node</span> Blueprint</h1>
+  <p class="standfirst">A build order for the CDN MVP: what the radial map actually has to do, which of the twelve rings ship live, which ship dark, and the ninety days that put a real product in front of real users. Written against the uploaded reference screens and the recorded product conversation.</p>
+  <div class="mastmeta">
+    <div>Scope<b>MVP + 3mo + 6mo</b></div>
+    <div>Screens specified<b>22 shipping</b></div>
+    <div>Live node families at launch<b>4 of 12</b></div>
+    <div>Assumed team<b>2&ndash;3 engineers</b></div>
+    <div>Primary platform<b>Mobile web first</b></div>
+  </div>
+</header>
+
+<div class="grid">
+<details class="railwrap" open><summary>Contents</summary>
+<nav class="rail" aria-label="Contents">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#s1"><i>01</i>Executive Summary</a></li>
+    <li><a href="#s2"><i>02</i>Critical Analysis</a></li>
+    <li><a href="#s3"><i>03</i>Product Interpretation</a></li>
+    <li><a href="#s4"><i>04</i>MVP Definition</a></li>
+    <li><a href="#s5"><i>05</i>Feature Priority Matrix</a></li>
+    <li><a href="#s6"><i>06</i>Information Architecture</a></li>
+    <li><a href="#s7"><i>07</i>Core User Flows</a></li>
+    <li><a href="#s8"><i>08</i>Screen Inventory</a></li>
+    <li><a href="#s9"><i>09</i>Radial Map Specification</a></li>
+    <li><a href="#s10"><i>10</i>Node System</a></li>
+    <li><a href="#s11"><i>11</i>Search UX</a></li>
+    <li><a href="#s12"><i>12</i>Link-to-Mind-Map</a></li>
+    <li><a href="#s13"><i>13</i>Page Watcher</a></li>
+    <li><a href="#s14"><i>14</i>User-Created Maps</a></li>
+    <li><a href="#s15"><i>15</i>Collaboration &amp; Permissions</a></li>
+    <li><a href="#s16"><i>16</i>CDN Design System</a></li>
+    <li><a href="#s17"><i>17</i>Responsive Strategy</a></li>
+    <li><a href="#s18"><i>18</i>Component Architecture</a></li>
+    <li><a href="#s19"><i>19</i>Design-to-Code Strategy</a></li>
+    <li><a href="#s20"><i>20</i>Phase Roadmap</a></li>
+    <li><a href="#s21"><i>21</i>3-Month Roadmap</a></li>
+    <li><a href="#s22"><i>22</i>6-Month Roadmap</a></li>
+    <li><a href="#s23"><i>23</i>Risks</a></li>
+    <li><a href="#s24"><i>24</i>Acceptance Criteria</a></li>
+    <li><a href="#s25"><i>25</i>Next Steps</a></li>
+  </ol>
+</nav>
+</details>
+
+<main>
+
+<section id="s1">
+<h2 class="sec"><i>01</i>Executive Summary</h2>
+<p>The uploaded screens already contain a real product. The infinity mark, the black ground, the twelve hue-coded satellites orbiting a lit central ring &mdash; that is a visual identity most startups never find. It should be preserved almost intact. What it does <strong>not</strong> yet contain is an interface: the reference is a picture of a map, and CDN needs a map that is <em>operated</em>.</p>
+<p>The gap between those two things is the whole job, and it is smaller than it looks. Three changes convert the poster into a product:</p>
+<ol class="body">
+<li><strong>Hue must carry meaning.</strong> Twelve nodes in twelve hues means colour encodes nothing but position. Collapse to six domain families, and colour becomes a navigational instrument that survives 500 nodes.</li>
+<li><strong>The centre must shrink.</strong> The brand lockup occupies roughly a third of the canvas. In the product, the centre is a 96&nbsp;px home node with the mark inside it, and the reclaimed space becomes ring two.</li>
+<li><strong>Labels must be earned, not printed.</strong> Four-line captions under every satellite are unreadable at 390&nbsp;px and impossible at ring three. Labels appear by zoom tier and by focus, never all at once.</li>
+</ol>
+<p>On scope: the recorded plan &mdash; one hundred revenue nodes, an infinite canvas, full collaboration, AI ingestion and marketplace, delivered in a single month by a small team &mdash; is not deliverable. It is not close. This blueprint replaces it with a scope that is: <strong>four live node families out of twelve, twenty-two screens, one showcase AI feature, and a hard cut on everything else</strong>, shipped over ninety days with the remaining eight families visible on the map as first-class <em>Coming Soon</em> destinations that collect email interest. The scale of the vision stays fully visible to the user. The build stays finite.</p>
+<div class="call key"><span class="lab">The single most important decision in this document</span>
+<p>Ship the <em>whole twelve-node map</em> visually and only four families functionally. This is the only way to keep the "wow" of the reference screen while keeping the MVP buildable, and it converts unfinished scope from a liability into a demand signal &mdash; every tap on a dark node is a logged vote for what to build next.</p></div>
+<h4>What a user can actually do at launch</h4>
+<p>Enter the map. Pan, zoom, expand and collapse rings, walk layers forward and backward. Search and see results rendered as a map. Create their own mind map, edit nodes, save it to their account, share it by link with public / private / node-viewable controls, invite collaborators with roles, and chat inside the map. Paste one URL and get a generated mind map back. Open Page Watcher, pick interests, and browse the community. Everything else is honest scaffolding.</p>
+</section>
+
+<section id="s2">
+<h2 class="sec"><i>02</i>Critical Analysis of the Reference Designs</h2>
+
+<h3>What is working extremely well &mdash; preserve</h3>
+<ul>
+<li><strong>The centre-as-home metaphor.</strong> A single lit ring containing the brand mark is instantly legible as "you are here, everything radiates from here." Very few products get a spatial home that strong.</li>
+<li><strong>The lit ring itself.</strong> The multi-hue circular sweep around the centre is the most ownable element in the whole identity &mdash; more ownable than the infinity mark, which reads as generic at small sizes. Keep the ring as the permanent signature of the centre and of any map root.</li>
+<li><strong>Radial-with-connectors, not a floating cloud.</strong> Drawing an explicit line from centre to each satellite, with a small terminal dot at each end, communicates the graph relationship rather than merely decorating. Keep the connectors and the terminal dots &mdash; they become the anchor for edge states later (active, pending, permission-blocked).</li>
+<li><strong>Pure black ground with depth haze.</strong> The faint violet network texture at the base of screen one gives depth without noise, and pure black is genuinely correct here: it makes neon read as emission rather than as pigment, and it is cheap on OLED.</li>
+<li><strong>Numbered satellites.</strong> The 1&ndash;12 numbering is not decoration &mdash; it gives every node a stable spoken and written address ("open 7"), which will matter enormously for support, deep links, and accessibility.</li>
+<li><strong>The "You are in: Central Node" pill.</strong> Correct instinct, wrong weight. This is the seed of the breadcrumb system in &sect;09.</li>
+</ul>
+
+<h3>What must change</h3>
+<div class="tw"><table>
+<thead><tr><th>Observed</th><th>Problem</th><th>Change</th></tr></thead>
+<tbody>
+<tr><td><b>12 distinct hues, one per node</b></td><td>Colour carries zero information. At ring 3 with 60+ nodes it becomes visual noise, and no user can learn 12 hue&ndash;meaning pairs.</td><td>Six <b>domain families</b>, each with one hue. Nodes inherit family hue; ring depth modulates luminance, not hue.</td></tr>
+<tr><td><b>Full brand lockup at centre</b></td><td>Consumes ~35% of a 390&times;844 canvas. Leaves no room for ring 2 without zooming out past legibility.</td><td>Centre becomes a 96&nbsp;px <b>home node</b>: lit ring + infinity glyph only. Wordmark lives in the top bar.</td></tr>
+<tr><td><b>3&ndash;4 line caption under every node</b></td><td>~9&nbsp;px effective type on mobile; captions collide between adjacent satellites; unreadable and untranslatable.</td><td>Label = name only, one line, max 18 chars, truncating. Description moves to the node detail sheet. Labels render by zoom tier (&sect;09).</td></tr>
+<tr><td><b>"Tap to enter" splash</b></td><td>A full screen of friction on every cold start for a product whose value <i>is</i> the map. Returning users pay it daily.</td><td>First-run only, and as a &le;1.2&nbsp;s load transition that resolves into the map. Never a gate for a returning session.</td></tr>
+<tr><td><b>5-tab bottom nav with centre Create FAB</b></td><td>A generic social-app chrome bolted onto a spatial product. It duplicates the map's own <code>+</code> FAB, and "Home / Explore" are both the map.</td><td>Four tabs: <b>Map &middot; Search &middot; My Maps &middot; You</b>. One create affordance, owned by the map surface.</td></tr>
+<tr><td><b>Both a bottom nav and a floating <code>+</code></b></td><td>Two competing primary actions, ~14&nbsp;px apart in the thumb zone.</td><td>Remove the tab-bar Create. Keep the FAB, which is contextual to the current map.</td></tr>
+<tr><td><b>"Customize Your Map" pill</b></td><td>Ambiguous &mdash; customise appearance, or contents, or which nodes show? Sits at the highest-value screen position.</td><td>Replace with the <b>Lens</b> control (&sect;09): a named view-state switcher (All &middot; Active only &middot; Trending &middot; Mine).</td></tr>
+<tr><td><b>Uniform glow on every node</b></td><td>If everything glows, glow means nothing, and the frame cost is paid on every node.</td><td>Glow becomes the <b>state channel</b>: full glow = active/selected, soft = available, none = inactive, dashed no-glow = Coming Soon.</td></tr>
+</tbody></table></div>
+
+<h3>Usability problems</h3>
+<ul>
+<li><strong>No way back.</strong> The screens show entry and expansion but no return path. In a zoomable canvas, users get lost within about three interactions. Requires: breadcrumb trail, <code>Recentre</code>, and layer forward/back &mdash; all three, not one.</li>
+<li><strong>Tap target vs. label mismatch.</strong> The visible circle is ~64&nbsp;px but the caption below is what users read and aim at. Hit area must be a single invisible ~88&nbsp;px capsule enclosing circle <em>and</em> label.</li>
+<li><strong>Ambiguous tap semantics.</strong> Does tapping a node expand it, open it, or select it? Undefined in the reference. Specified in &sect;10: tap = select + peek; second tap or sheet CTA = open; long-press / double-tap = expand ring.</li>
+<li><strong>Popularity re-sorting destroys spatial memory.</strong> The recorded requirement is that popular nodes automatically pull toward the centre. That directly conflicts with the map being learnable &mdash; if node 7 moves every week, muscle memory never forms. See the resolution in &sect;09.</li>
+</ul>
+
+<h3>Mobile problems</h3>
+<ul>
+<li>Twelve satellites on a 390&nbsp;px width forces a ~150&nbsp;px orbit radius; with 88&nbsp;px targets the ring is over-subscribed and adjacent hit areas overlap. Mobile ring&nbsp;1 must cap at <strong>8 visible satellites</strong>, with the remainder reachable by ring rotation or the list view.</li>
+<li>Pinch-zoom on a canvas fights the browser's own page zoom and iOS Safari's double-tap zoom unless <code>touch-action</code> is set explicitly on the canvas element and only there.</li>
+<li>The map's centre of gravity sits under the notch/dynamic island in screen&nbsp;2. Safe-area insets must be real tokens, not guesses.</li>
+<li>Bottom sheet + bottom nav + home indicator stack to ~180&nbsp;px of dead vertical space on the detail state.</li>
+</ul>
+
+<h3>Desktop problems</h3>
+<ul>
+<li>A mobile radial map scaled to 1440&nbsp;px leaves enormous empty margins. Desktop needs a genuinely different composition: map centred in a canvas region with a <strong>persistent right inspector panel</strong> (360&nbsp;px) replacing the bottom sheet, and the breadcrumb promoted to a top-left rail.</li>
+<li>No hover states exist in the reference at all. Desktop needs hover peek (label + one-line description on the connector), cursor affordances, and edge highlighting.</li>
+<li>No keyboard model. A radial canvas with no keyboard navigation is unusable for a meaningful share of users and unauditable for accessibility.</li>
+</ul>
+
+<h3>Accessibility problems <span class="chip risk">Highest legal + reach risk</span></h3>
+<ul>
+<li><strong>Thin neon strokes on black.</strong> A 1&ndash;2&nbsp;px high-chroma stroke may pass a contrast-ratio calculation while being effectively invisible to low-vision users. Node borders need a minimum 2&nbsp;px stroke plus an inner fill tint at &ge;20% opacity so shape, not just edge, carries the node.</li>
+<li><strong>Saturated cyan/magenta text on pure black</strong> causes chromatic aberration and halation, particularly for astigmatism. Node <em>labels</em> must be near-white (<code>#EDEEF7</code>), never the node's hue. Hue lives in the ring, the glow and the connector only.</li>
+<li><strong>Colour as sole state channel.</strong> Coming Soon vs. active must also differ in stroke style (dashed vs. solid) and carry a text badge in the detail sheet.</li>
+<li><strong>A radial canvas has no reading order.</strong> This is the structural issue. The mitigation is not ARIA sprinkled on a canvas &mdash; it is a <strong>parallel tree view</strong> (&sect;09) that renders the same data as a semantic nested list, toggleable by anyone, and used as the screen-reader and no-JS representation. It also gives you crawlable HTML for SEO and a low-end-device fallback. Build it in Phase&nbsp;3, not as a retrofit.</li>
+<li>Motion: orbit drift, pulse and glow breathing must all be gated behind <code>prefers-reduced-motion</code>.</li>
+</ul>
+
+<h3>Performance problems</h3>
+<ul>
+<li><strong>CSS <code>box-shadow</code> and <code>filter: blur()</code> per node will not survive.</strong> Each glow is an off-screen composite; 60 of them on a mid-range Android during a pinch gesture drops the map to single-digit frames. Glow must be pre-baked &mdash; a radial-gradient sprite drawn to canvas, or a single WebGL pass &mdash; not a live filter per element.</li>
+<li>DOM nodes cannot be the rendering strategy past ~150 elements. Target: canvas or WebGL renderer with DOM used only for the focused node's label and the panels.</li>
+<li>Connector lines with glow are the second cost centre; render them as a single batched path per family, not per edge.</li>
+<li>The starfield/network background must be a static image or one cheap shader, never animated particles.</li>
+</ul>
+
+<h3>Information-architecture problems</h3>
+<ul>
+<li>The twelve categories are <strong>tool categories, not user goals</strong>. "Analytics &amp; Reports" and "Cloud &amp; Storage" are features of a platform, not destinations a person navigates to. This makes the map look like a feature inventory rather than a place. &sect;03 regroups them.</li>
+<li>Several named MVP features have no home in the twelve: Page Watcher, Freelancing, Active Projects, Partners &amp; Sponsors, Community Map, Link-to-Mind-Map. Ring one must be re-cut to hold them.</li>
+<li>The Community Map and a user's own map are shown as the same surface, but they have entirely different permission models and must be visually distinguishable at a glance.</li>
+</ul>
+
+<h3>Essential identity vs. decoration</h3>
+<div class="tw"><table>
+<thead><tr><th>Element</th><th>Verdict</th><th>Reasoning</th></tr></thead>
+<tbody>
+<tr><td>Lit multi-hue ring around centre</td><td><span class="chip must">Essential</span></td><td>The single most ownable mark. Signature of any map root.</td></tr>
+<tr><td>Pure black ground</td><td><span class="chip must">Essential</span></td><td>Makes neon read as emission. Also the cheapest ground for OLED and for glow compositing.</td></tr>
+<tr><td>Radial layout with visible connectors</td><td><span class="chip must">Essential</span></td><td>It is the product, not a style.</td></tr>
+<tr><td>Circular node with icon inside</td><td><span class="chip must">Essential</span></td><td>Scales, rotates and clusters better than cards. Keep.</td></tr>
+<tr><td>Numbered nodes</td><td><span class="chip must">Essential</span></td><td>Stable addressing. Unexpectedly load-bearing.</td></tr>
+<tr><td>Infinity mark</td><td><span class="chip should">Keep, demote</span></td><td>Works in the top bar and as the centre glyph; illegible below 32&nbsp;px. Needs a simplified single-stroke variant.</td></tr>
+<tr><td>Per-node unique hue</td><td><span class="chip defer">Decorative</span></td><td>Actively harmful at scale. Replace with family hues.</td></tr>
+<tr><td>Multi-line node captions</td><td><span class="chip defer">Decorative</span></td><td>Poster typography. Does not survive the interface.</td></tr>
+<tr><td>Gradient wordmark (3 hues, 3 lines)</td><td><span class="chip defer">Decorative</span></td><td>Beautiful as a logo, unusable as UI chrome. One-line lockup for the app.</td></tr>
+<tr><td>Ambient particle/starfield</td><td><span class="chip defer">Decorative</span></td><td>Keep as a static texture at low opacity. Never animate it.</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="s3">
+<h2 class="sec"><i>03</i>Product Interpretation</h2>
+<p>Stated plainly, so that scope arguments have something to resolve against:</p>
+<div class="call"><span class="lab">Working definition</span>
+<p><strong>CDN is a spatial browser.</strong> Where a conventional browser gives you one page at a time and hides structure in tabs and history, CDN gives you a persistent map where destinations, tools, people and your own notes occupy fixed positions you can learn. The Community Map is the shared public territory. A user map is private territory with the same physics.</p></div>
+<p>Two products live inside that definition and they have different users:</p>
+<div class="tw"><table>
+<thead><tr><th>Surface</th><th>User</th><th>Job</th><th>Success signal</th></tr></thead>
+<tbody>
+<tr><td><b>Community Map</b> (discovery)</td><td>Visitor, new user</td><td>See the scale of CDN; find a service, project or community page</td><td>Reaches a live destination inside 3 taps</td></tr>
+<tr><td><b>My Maps</b> (creation)</td><td>Returning, signed-in</td><td>Build, save, share and co-edit their own map</td><td>Creates a map and shares it within week 1</td></tr>
+</tbody></table></div>
+<p>The MVP must be excellent at both, and the discovery surface is what sells the creation surface. That ordering drives the build order in &sect;20.</p>
+
+<h3>Ring one, re-cut</h3>
+<p>The reference's twelve are regrouped into <strong>six domain families</strong> (which own the hues) containing <strong>twelve ring-one destinations</strong> (which keep the numbering and the visual richness). Four families ship live.</p>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>Ring-one node</th><th>Family</th><th>Hue</th><th>MVP status</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><b>Mind Mapping</b> &mdash; create &amp; open your maps</td><td>Create</td><td>Lime</td><td><span class="chip must">Live</span></td></tr>
+<tr><td>2</td><td><b>Link-to-Mind-Map</b> &mdash; paste a URL, get a map</td><td>Create</td><td>Lime</td><td><span class="chip must">Live</span></td></tr>
+<tr><td>3</td><td><b>Page Watcher</b> &mdash; interest-led community browsing</td><td>Discover</td><td>Cyan</td><td><span class="chip must">Live</span></td></tr>
+<tr><td>4</td><td><b>Build With Us</b> &mdash; full-stack, web, mobile, game dev</td><td>Services</td><td>Orange</td><td><span class="chip must">Live</span></td></tr>
+<tr><td>5</td><td><b>Active Projects</b> &mdash; live portfolio of CDN work</td><td>Services</td><td>Orange</td><td><span class="chip must">Live</span></td></tr>
+<tr><td>6</td><td><b>People &amp; Networks</b> &mdash; profiles, follows</td><td>People</td><td>Magenta</td><td><span class="chip soon">Coming Soon</span></td></tr>
+<tr><td>7</td><td><b>Freelance &amp; Marketplace</b></td><td>Services</td><td>Orange</td><td><span class="chip soon">Coming Soon</span></td></tr>
+<tr><td>8</td><td><b>AI Tools</b> &mdash; paid AI capabilities</td><td>Create</td><td>Lime</td><td><span class="chip soon">Coming Soon</span></td></tr>
+<tr><td>9</td><td><b>Ideas &amp; Innovation</b></td><td>Discover</td><td>Cyan</td><td><span class="chip soon">Coming Soon</span></td></tr>
+<tr><td>10</td><td><b>Tasks, Calendar &amp; Projects</b></td><td>Organise</td><td>Violet</td><td><span class="chip soon">Coming Soon</span></td></tr>
+<tr><td>11</td><td><b>Commerce &amp; Payments</b></td><td>Commerce</td><td>Teal</td><td><span class="chip soon">Coming Soon</span></td></tr>
+<tr><td>12</td><td><b>Partners &amp; Sponsors</b></td><td>People</td><td>Magenta</td><td><span class="chip soon">Coming Soon</span></td></tr>
+</tbody></table></div>
+<div class="call assume"><span class="lab">Assumption</span>
+<p>Cloud &amp; Storage, Analytics &amp; Reports, Apps &amp; Integrations and Marketing &amp; Automation are removed from ring one. They are <em>platform capabilities</em>, not destinations &mdash; storage is implicit in saving a map, analytics belongs in a map's own panel. Consequence: ring one becomes twelve <em>places a person would go</em> rather than a systems diagram. If you disagree, they return as ring-two children of Organise and cost nothing.</p></div>
+</section>
+
+<section id="s4">
+<h2 class="sec"><i>04</i>MVP Definition</h2>
+<p>The test applied to every line below: <em>does removing this stop a user completing "enter &rarr; find something &rarr; make something &rarr; share it"?</em> If not, it is not MVP.</p>
+
+<h3>Must have</h3>
+<ul>
+<li>Radial Community Map: centre + ring one + ring two, pan, pinch/scroll zoom, expand, collapse.</li>
+<li>Layer forward / backward navigation and breadcrumb; <code>Recentre</code>.</li>
+<li>Parallel tree view (accessibility, low-end devices, SEO).</li>
+<li>Node select, node detail sheet/panel, node open, node deep link (<code>cdn.app/n/&lt;id&gt;</code>).</li>
+<li>Coming Soon node state with interest capture.</li>
+<li>Global search &rarr; list results <em>and</em> map-rendered results; return to prior map state.</li>
+<li>Accounts: email + OAuth, session, profile basics.</li>
+<li>Map creator: create, add / edit / delete / connect / move nodes, undo, autosave, rename, duplicate.</li>
+<li>Cloud save of user maps; My Maps list.</li>
+<li>Share: link, with <strong>Private / Link-viewable / Public</strong> and the <strong>node-viewable</strong> toggle.</li>
+<li>Collaborators: invite by email/link, roles (Owner, Admin, Editor, Commenter, Viewer), remove, transfer admin.</li>
+<li>Map chat (per-map thread, text only).</li>
+<li>Link-to-Mind-Map: single URL &rarr; generated node structure &rarr; edit &rarr; save.</li>
+<li>Page Watcher: interest selection &rarr; Go &rarr; content feed &rarr; open / save / create node from item.</li>
+<li>Notifications: invites, role changes, chat mentions.</li>
+<li>Trust &amp; safety: report node/map/user, moderation queue, automated text screening, blocklist, ToS gate on publish.</li>
+<li>Revenue node experience: service detail page + enquiry form, for <em>Build With Us</em>.</li>
+</ul>
+
+<h3>Should have</h3>
+<ul>
+<li>Lens switcher (All / Active only / Trending / Mine).</li>
+<li>Presence avatars on collaborative maps.</li>
+<li>Activity log per map.</li>
+<li>Map templates (3&ndash;5 starters).</li>
+<li>Node types beyond default: link, note, image, date. (Not the "limitless" node engine.)</li>
+<li>Export map as PNG.</li>
+</ul>
+
+<h3>Could have</h3>
+<ul>
+<li>Comments pinned to a node.</li>
+<li>Search filters by family and by node type.</li>
+<li>Map thumbnails auto-generated for the My Maps grid.</li>
+<li>Keyboard-only map traversal on desktop.</li>
+</ul>
+
+<h3>Visible but Coming Soon</h3>
+<p>All eight non-live ring-one nodes, plus the ring-two children under them. Tapping opens a real sheet: what it will do, an honest target window, and <em>Notify me</em>. This is a designed experience, not a disabled state &mdash; see screen&nbsp;22.</p>
+
+<h3>Explicitly deferred</h3>
+<div class="tw"><table>
+<thead><tr><th>Deferred</th><th>Why</th><th>Earliest</th></tr></thead>
+<tbody>
+<tr><td>100 revenue nodes</td><td>Each needs pricing, copy, fulfilment and support. One done well beats 100 hollow.</td><td>Month 4+, incrementally</td></tr>
+<tr><td>Payments / Stripe / subscriptions</td><td>No paid feature exists yet to gate. Enquiry form converts fine at this stage.</td><td>Month 4</td></tr>
+<tr><td>Freelancer marketplace with escrow</td><td>Two-sided market + money handling + disputes. Larger than the rest of the MVP combined.</td><td>Month 5&ndash;6</td></tr>
+<tr><td>"Limitless" node behaviour engine</td><td>A node that can be a calendar, CRM, storefront and workflow is a plugin platform. Needs a stable core first.</td><td>Month 6+</td></tr>
+<tr><td>Multi-touch smartboard (20/40/60 pt)</td><td>Real, valuable, and pointless before the single-pointer canvas is solid. Design for it now (&sect;17); implement later.</td><td>Month 5&ndash;6</td></tr>
+<tr><td>Native iOS / Android apps</td><td>Responsive web + PWA covers MVP validation at a fraction of the cost.</td><td>Post-validation</td></tr>
+<tr><td>AI agent orchestration</td><td>Vision-tier. One AI feature done well (Link-to-Mind-Map) proves the thesis.</td><td>Month 6+</td></tr>
+<tr><td>Real-time multi-cursor co-editing</td><td>CRDT infrastructure. MVP uses node-level locking + refresh, which is honest and sufficient for 2&ndash;5 collaborators.</td><td>Month 4&ndash;5</td></tr>
+</tbody></table></div>
+
+<h3>Do not design yet</h3>
+<p>Enterprise admin console, white-label theming, analytics dashboards, developer/plugin API surface, ad or sponsorship placement UI, in-map video calls, mobile-native onboarding. Designing these now produces work that will be thrown away when the core model shifts &mdash; and the core model <em>will</em> shift after the first fifty real users.</p>
+</section>
+
+<section id="s5">
+<h2 class="sec"><i>05</i>Feature Priority Matrix</h2>
+<p>Value and cost are relative, 1&ndash;5. "Build" is the phase from &sect;20.</p>
+<div class="tw"><table class="tight">
+<thead><tr><th>Feature</th><th>Priority</th><th>Value</th><th>Cost</th><th>Build</th><th>Depends on</th></tr></thead>
+<tbody>
+<tr><td><b>Design system + tokens</b></td><td><span class="chip must">Must</span></td><td>5</td><td>2</td><td>P1</td><td>&mdash;</td></tr>
+<tr><td><b>Canvas renderer (pan/zoom/hit-test)</b></td><td><span class="chip must">Must</span></td><td>5</td><td>5</td><td>P3</td><td>Tokens, node schema</td></tr>
+<tr><td><b>Radial layout engine</b></td><td><span class="chip must">Must</span></td><td>5</td><td>4</td><td>P3</td><td>Renderer</td></tr>
+<tr><td><b>Layer fwd/back + breadcrumb</b></td><td><span class="chip must">Must</span></td><td>5</td><td>2</td><td>P3</td><td>Layout engine</td></tr>
+<tr><td><b>Tree view (a11y parallel)</b></td><td><span class="chip must">Must</span></td><td>4</td><td>2</td><td>P3</td><td>Node schema</td></tr>
+<tr><td><b>Node detail panel</b></td><td><span class="chip must">Must</span></td><td>5</td><td>2</td><td>P4</td><td>Renderer</td></tr>
+<tr><td><b>Coming Soon experience</b></td><td><span class="chip must">Must</span></td><td>4</td><td>1</td><td>P4</td><td>Node states</td></tr>
+<tr><td><b>Node deep links</b></td><td><span class="chip must">Must</span></td><td>4</td><td>2</td><td>P4</td><td>Routing</td></tr>
+<tr><td><b>Accounts + auth</b></td><td><span class="chip must">Must</span></td><td>5</td><td>2</td><td>P6</td><td>Backend</td></tr>
+<tr><td><b>Map creator / editor</b></td><td><span class="chip must">Must</span></td><td>5</td><td>5</td><td>P5</td><td>Renderer, schema</td></tr>
+<tr><td><b>Cloud save + My Maps</b></td><td><span class="chip must">Must</span></td><td>5</td><td>3</td><td>P6</td><td>Auth, DB</td></tr>
+<tr><td><b>Share + privacy + node-viewable</b></td><td><span class="chip must">Must</span></td><td>5</td><td>3</td><td>P7</td><td>Cloud save</td></tr>
+<tr><td><b>Roles &amp; invites</b></td><td><span class="chip must">Must</span></td><td>4</td><td>4</td><td>P7</td><td>Auth, sharing</td></tr>
+<tr><td><b>Global search + map results</b></td><td><span class="chip must">Must</span></td><td>5</td><td>3</td><td>P8</td><td>Index, layout engine</td></tr>
+<tr><td><b>Link-to-Mind-Map</b></td><td><span class="chip must">Must</span></td><td>5</td><td>3</td><td>P9</td><td>LLM, fetcher, editor</td></tr>
+<tr><td><b>Page Watcher</b></td><td><span class="chip must">Must</span></td><td>3</td><td>3</td><td>P10</td><td>Content model, tags</td></tr>
+<tr><td><b>Map chat</b></td><td><span class="chip must">Must</span></td><td>3</td><td>3</td><td>P11</td><td>Roles, realtime</td></tr>
+<tr><td><b>Moderation + reporting</b></td><td><span class="chip must">Must</span></td><td>4</td><td>3</td><td>P13</td><td>Content model</td></tr>
+<tr><td><b>Build With Us service node</b></td><td><span class="chip must">Must</span></td><td>5</td><td>1</td><td>P12</td><td>Node detail</td></tr>
+<tr><td>Lens switcher</td><td><span class="chip should">Should</span></td><td>3</td><td>2</td><td>P4</td><td>Layout engine</td></tr>
+<tr><td>Presence + activity</td><td><span class="chip should">Should</span></td><td>3</td><td>3</td><td>P11</td><td>Realtime</td></tr>
+<tr><td>Templates</td><td><span class="chip should">Should</span></td><td>3</td><td>1</td><td>P5</td><td>Editor</td></tr>
+<tr><td>Extra node types</td><td><span class="chip should">Should</span></td><td>3</td><td>3</td><td>P5</td><td>Schema</td></tr>
+<tr><td>PNG export</td><td><span class="chip could">Could</span></td><td>2</td><td>2</td><td>P8</td><td>Renderer</td></tr>
+<tr><td>Node comments</td><td><span class="chip could">Could</span></td><td>2</td><td>3</td><td>P11</td><td>Chat</td></tr>
+<tr><td>Keyboard traversal</td><td><span class="chip could">Could</span></td><td>3</td><td>2</td><td>P13</td><td>Tree view</td></tr>
+<tr><td>Payments</td><td><span class="chip defer">Defer</span></td><td>4</td><td>4</td><td>M4</td><td>Paid surface</td></tr>
+<tr><td>Marketplace</td><td><span class="chip defer">Defer</span></td><td>4</td><td>5</td><td>M5</td><td>Payments, trust</td></tr>
+<tr><td>Node behaviour engine</td><td><span class="chip defer">Defer</span></td><td>5</td><td>5</td><td>M6</td><td>Stable core</td></tr>
+<tr><td>Multi-touch board</td><td><span class="chip defer">Defer</span></td><td>3</td><td>4</td><td>M5</td><td>Canvas maturity</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="s6">
+<h2 class="sec"><i>06</i>Information Architecture</h2>
+
+<h4>Primary navigation &mdash; 4 tabs, mobile</h4>
+<div class="tw"><table>
+<thead><tr><th>Tab</th><th>Lands on</th><th>Holds</th></tr></thead>
+<tbody>
+<tr><td><b>Map</b></td><td>Community Map at centre</td><td>The whole radial experience, node details, Coming Soon, service nodes, Page Watcher, Link-to-Mind-Map entry</td></tr>
+<tr><td><b>Search</b></td><td>Search field, focused</td><td>Suggestions, filters, list results, map results</td></tr>
+<tr><td><b>My Maps</b></td><td>Grid of the user's maps</td><td>Create, open editor, shared-with-me, templates</td></tr>
+<tr><td><b>You</b></td><td>Profile</td><td>Account, notifications, settings, saved items, moderation (if staff)</td></tr>
+</tbody></table></div>
+<p>On desktop these become a left icon rail; the map region gains a right inspector panel.</p>
+
+<h4>Secondary navigation &mdash; on-map, always available</h4>
+<ul>
+<li><strong>Breadcrumb</strong> (top): <code>CDN &rsaquo; Create &rsaquo; Mind Mapping</code>, each segment tappable.</li>
+<li><strong>Layer stepper</strong> (left edge): <code>&lang;</code> outward / <code>&rang;</code> inward &mdash; pulls an outer ring into the centre position without gesture work.</li>
+<li><strong>Zoom + Recentre</strong> (right edge): <code>+</code> / <code>&minus;</code> / <code>&#8982;</code>.</li>
+<li><strong>Lens</strong> (bottom-left pill): All &middot; Active only &middot; Trending &middot; Mine.</li>
+<li><strong>View toggle</strong>: Map &harr; Tree.</li>
+<li><strong>Create FAB</strong> (bottom-right): context-aware &mdash; on Community Map it starts a new map; inside your own map it adds a node.</li>
+</ul>
+
+<h4>Content hierarchy</h4>
+<div class="tw"><table>
+<thead><tr><th>Level</th><th>Entity</th><th>Cardinality at MVP</th></tr></thead>
+<tbody>
+<tr><td>0</td><td>Centre node (map root)</td><td>1 per map</td></tr>
+<tr><td>1</td><td>Ring-one destinations</td><td>12 (Community), 3&ndash;8 typical (user maps)</td></tr>
+<tr><td>2</td><td>Ring-two children</td><td>4&ndash;8 per parent, ~60 total</td></tr>
+<tr><td>3</td><td>Leaf nodes &mdash; links, notes, services, pages</td><td>Unbounded, rendered by cluster (&sect;09)</td></tr>
+</tbody></table></div>
+
+<h4>Map spaces</h4>
+<div class="tw"><table>
+<thead><tr><th>Space</th><th>Owner</th><th>Who edits</th><th>Visual signature</th></tr></thead>
+<tbody>
+<tr><td><b>Community Map</b></td><td>CDN</td><td>CDN staff admins only</td><td>Full-spectrum lit centre ring</td></tr>
+<tr><td><b>My Map</b></td><td>A user</td><td>Owner + invited roles</td><td>Single-hue centre ring, owner avatar at centre</td></tr>
+<tr><td><b>Shared with me</b></td><td>Another user</td><td>Per assigned role</td><td>Centre ring + collaborator badge</td></tr>
+<tr><td><b>Search result map</b></td><td>Ephemeral</td><td>Nobody</td><td>Dashed centre ring, "Results for …" at centre</td></tr>
+</tbody></table></div>
+
+<h4>Account, settings, admin</h4>
+<ul>
+<li><strong>You</strong> &rarr; Profile (name, handle, avatar, bio, public maps) &middot; Notifications &middot; Saved &middot; Settings.</li>
+<li><strong>Settings</strong> &rarr; Account &middot; Privacy defaults &middot; Notification prefs &middot; Appearance (motion, glow intensity, tree-view default) &middot; Blocked users &middot; Data &amp; deletion.</li>
+<li><strong>Admin</strong> (staff only, hidden otherwise) &rarr; Moderation queue &middot; Reports &middot; Community Map editing &middot; Coming Soon interest counts.</li>
+<li><strong>Map-level admin</strong> (per map, owner/admin) &rarr; Collaborators &middot; Roles &middot; Privacy &middot; Activity &middot; Danger zone.</li>
+</ul>
+</section>
+
+<section id="s7">
+<h2 class="sec"><i>07</i>Core User Flows</h2>
+<p>Seven flows. Everything in the screen inventory serves one of them; anything that serves none was cut.</p>
+
+<h4>F1 &mdash; First visit to arrival <span class="chip must">Critical path</span></h4>
+<p>Load (branded transition &le;1.2&nbsp;s) &rarr; Community Map, centre + ring one, gentle stagger-in &rarr; a one-time coach overlay names three gestures and dismisses on first touch &rarr; tap a node &rarr; detail sheet &rarr; <em>Open</em> &rarr; destination. <strong>Target: reach a live destination in &le;3 taps, &le;25&nbsp;s.</strong></p>
+
+<h4>F2 &mdash; Explore into depth and get back</h4>
+<p>Tap node &rarr; long-press or <em>Expand</em> &rarr; ring two blooms, parent re-anchors toward centre, breadcrumb gains a segment &rarr; pan/zoom freely &rarr; return via breadcrumb tap, layer stepper, or <em>Recentre</em>. <strong>Rule: no state is reachable that cannot be exited in one tap.</strong></p>
+
+<h4>F3 &mdash; Search as navigation</h4>
+<p>Tap Search &rarr; type &rarr; live suggestions grouped by Nodes / Maps / People / Pages &rarr; Enter &rarr; results as list, with a <em>See as map</em> toggle &rarr; result map renders with the query at centre &rarr; open a result &rarr; <em>Back to your map</em> restores the exact prior camera and expansion state.</p>
+
+<h4>F4 &mdash; Create, save, share <span class="chip must">Critical path</span></h4>
+<p>My Maps &rarr; <em>New map</em> &rarr; name + choose blank or template &rarr; editor opens with centre node in edit state &rarr; add nodes (FAB, double-tap canvas, or Enter/Tab on desktop) &rarr; autosave from the first change &rarr; <em>Share</em> &rarr; choose visibility + node-viewable &rarr; copy link. <strong>Target: blank to shared link in &le;3 minutes.</strong></p>
+
+<h4>F5 &mdash; Invite and collaborate</h4>
+<p>Share sheet &rarr; <em>Invite people</em> &rarr; email or link, pick role &rarr; invitee gets notification + email &rarr; accepts &rarr; map appears in Shared with me &rarr; edits per role &rarr; map chat for coordination &rarr; owner reviews Activity, promotes to Admin or removes.</p>
+
+<h4>F6 &mdash; Link-to-Mind-Map <span class="chip must">Showcase</span></h4>
+<p>Ring-one node 2, or the editor toolbar &rarr; paste URL &rarr; inline validation &rarr; processing with visible stages &rarr; preview of proposed structure, already laid out radially &rarr; edit / drop / merge nodes &rarr; <em>Create map</em> &rarr; saved to My Maps with source attribution on every node.</p>
+
+<h4>F7 &mdash; Page Watcher</h4>
+<p>Ring-one node 3 &rarr; interest chips (multi-select, remembered) &rarr; <em>Go</em> &rarr; vertical card feed of community pages &rarr; open, save, or <em>Add to map</em> &rarr; picker chooses target map &rarr; toast confirms and offers <em>View in map</em>.</p>
+</section>
+
+<section id="s8">
+<h2 class="sec"><i>08</i>Complete MVP Screen Inventory</h2>
+<p>Twenty-two screens ship. The reference list of 24 collapses: <em>Expanded radial map</em>, <em>Selected node state</em> and <em>Node detail panel</em> are <strong>states of one screen</strong>, not screens &mdash; treating them as separate is how design files bloat and how engineers end up building three components where one belongs. <em>Save map</em> is a system behaviour (autosave) with a toast, not a screen.</p>
+
+<h4>Master inventory</h4>
+<div class="tw"><table class="tight">
+<thead><tr><th>#</th><th>Screen</th><th>Purpose</th><th>Entry</th><th>Primary CTA</th><th>Key components</th></tr></thead>
+<tbody>
+<tr><td>01</td><td><b>Entry transition</b></td><td>Brand moment; preload map data</td><td>Cold start, first run</td><td>(auto-resolves)</td><td>LitRing, Wordmark, ProgressWhisper</td></tr>
+<tr><td>02</td><td><b>Community Map</b></td><td>The product. Browse the network</td><td>Map tab, logo, deep link</td><td>Tap a node</td><td>MapCanvas, NodeMarker, Breadcrumb, LayerStepper, ZoomControls, LensPill, FAB</td></tr>
+<tr><td>03</td><td><b>Node detail</b></td><td>Explain a node, offer its actions</td><td>Node tap, deep link</td><td>Open / Expand</td><td>DetailSheet (mobile) / InspectorPanel (desktop), NodeHeader, ActionRow, MetaList, ShareButton</td></tr>
+<tr><td>04</td><td><b>Tree view</b></td><td>Accessible, scannable equivalent of the map</td><td>View toggle, screen reader, no-JS</td><td>Open a node</td><td>TreeList, TreeRow, FamilyDot, ExpandChevron</td></tr>
+<tr><td>05</td><td><b>Search</b></td><td>Find anything; second navigation model</td><td>Search tab, map search icon, <code>/</code></td><td>Submit query</td><td>SearchField, SuggestionGroup, RecentChips, FilterBar</td></tr>
+<tr><td>06</td><td><b>Search results</b></td><td>Show matches as list or map</td><td>From 05</td><td>Open result</td><td>ResultCard, ViewToggle, ResultMap, FilterBar, BackToMapBar</td></tr>
+<tr><td>07</td><td><b>My Maps</b></td><td>Own and shared maps</td><td>My Maps tab</td><td>New map</td><td>MapCard, TabSegment (Mine/Shared), EmptyState, SortMenu</td></tr>
+<tr><td>08</td><td><b>New map</b></td><td>Name it, choose a starting point</td><td>New map, FAB</td><td>Create map</td><td>Modal, TextField, TemplateTile, VisibilityPicker</td></tr>
+<tr><td>09</td><td><b>Map editor</b></td><td>Build and arrange a map</td><td>Open own map</td><td>Add node</td><td>MapCanvas(edit), EditToolbar, NodeMarker(editable), SelectionHandles, UndoBar, SaveIndicator</td></tr>
+<tr><td>10</td><td><b>Node editor</b></td><td>Set a node's content and behaviour</td><td>Add/edit node in 09</td><td>Done</td><td>DetailSheet(edit), TextField, TypePicker, IconPicker, ColorFamilyPicker, LinkField, DeleteAction</td></tr>
+<tr><td>11</td><td><b>Share map</b></td><td>Produce a link with the right exposure</td><td>Share in 09 / 07</td><td>Copy link</td><td>ShareSheet, VisibilityPicker, NodeViewableToggle, LinkRow, InviteEntry, PreviewAs</td></tr>
+<tr><td>12</td><td><b>Collaborators</b></td><td>Who has access and at what level</td><td>Share sheet, map menu</td><td>Invite</td><td>PersonRow, RoleMenu, PendingInvite, RoleLegend, TransferOwnership</td></tr>
+<tr><td>13</td><td><b>Map chat</b></td><td>Coordinate without leaving the map</td><td>Chat icon on a shared map</td><td>Send</td><td>ChatPanel, MessageBubble, Composer, PresenceStack, NodeMentionChip</td></tr>
+<tr><td>14</td><td><b>Link-to-Mind-Map</b></td><td>URL &rarr; generated map</td><td>Ring node 2, editor toolbar</td><td>Create map</td><td>UrlField, ProcessStages, StructurePreview, NodeChecklist, RegenerateButton</td></tr>
+<tr><td>15</td><td><b>Page Watcher setup</b></td><td>Pick interests</td><td>Ring node 3</td><td>Go</td><td>InterestChipGrid, SelectedCount, RememberToggle</td></tr>
+<tr><td>16</td><td><b>Page Watcher feed</b></td><td>Browse matched community content</td><td>From 15</td><td>Open item</td><td>ContentCard, SaveAction, AddToMapAction, FilterBar, InfiniteList</td></tr>
+<tr><td>17</td><td><b>Service node</b></td><td>Sell a service; capture enquiries</td><td>Ring node 4 / 5</td><td>Start a project</td><td>ServiceHero, CapabilityList, WorkGrid, EnquiryForm, TrustRow</td></tr>
+<tr><td>18</td><td><b>Profile</b></td><td>Identity + public maps</td><td>You tab, avatar tap</td><td>Edit profile</td><td>ProfileHeader, MapCard grid, FollowButton (soon), ReportAction</td></tr>
+<tr><td>19</td><td><b>Notifications</b></td><td>Invites, roles, mentions</td><td>Bell, You tab</td><td>Accept invite</td><td>NotificationRow, InlineAcceptDecline, EmptyState, MarkAllRead</td></tr>
+<tr><td>20</td><td><b>Settings</b></td><td>Account, privacy, appearance</td><td>You tab</td><td>Save</td><td>SettingsGroup, ToggleRow, SelectRow, DangerZone</td></tr>
+<tr><td>21</td><td><b>Moderation</b></td><td>Review reports; act</td><td>Staff-only route</td><td>Resolve</td><td>ReportQueue, ReportCard, ActionBar, AuditTrail, FilterBar</td></tr>
+<tr><td>22</td><td><b>Coming Soon</b></td><td>Honest placeholder that captures demand</td><td>Tap an inactive node</td><td>Notify me</td><td>DetailSheet(soon), SoonBadge, TargetWindow, InterestButton, RelatedLiveNodes</td></tr>
+</tbody></table></div>
+
+<h4>Secondary actions &amp; navigation targets</h4>
+<div class="tw"><table class="tight">
+<thead><tr><th>#</th><th>Secondary actions</th><th>Goes to</th></tr></thead>
+<tbody>
+<tr><td>02</td><td>Search, expand, collapse, recentre, lens, tree toggle, share map</td><td>03, 04, 05, 08</td></tr>
+<tr><td>03</td><td>Share node link, copy, report, add to my map, collapse</td><td>02, 11, 17, 22</td></tr>
+<tr><td>06</td><td>Filter, switch view, clear, back to prior map state</td><td>02, 03, 18</td></tr>
+<tr><td>07</td><td>Rename, duplicate, share, delete, sort, open shared tab</td><td>09, 11</td></tr>
+<tr><td>09</td><td>Undo/redo, delete, connect, rearrange, chat, collaborators, share, exit</td><td>10, 11, 12, 13</td></tr>
+<tr><td>11</td><td>Manage collaborators, preview as viewer, revoke link</td><td>12</td></tr>
+<tr><td>12</td><td>Change role, remove, resend invite, transfer ownership</td><td>&mdash;</td></tr>
+<tr><td>14</td><td>Edit node, remove node, regenerate, change depth, cancel</td><td>09, 07</td></tr>
+<tr><td>16</td><td>Save, add to map, share, change interests, report</td><td>15, 09, 21</td></tr>
+<tr><td>22</td><td>Notify me, see related live nodes, back to map</td><td>02</td></tr>
+</tbody></table></div>
+
+<h4>State matrix &mdash; every screen, every required state</h4>
+<div class="tw"><table class="tight">
+<thead><tr><th>#</th><th>Loading</th><th>Empty</th><th>Error</th><th>Permission</th><th>Coming Soon</th></tr></thead>
+<tbody>
+<tr><td>02</td><td>Centre ring draws first, satellites fade in staggered 40&nbsp;ms; skeleton orbits at 12% opacity</td><td>n/a &mdash; Community Map always has content</td><td>"Can&rsquo;t reach the network." Cached map + Retry</td><td>n/a</td><td>8 of 12 nodes render dashed, unglowed</td></tr>
+<tr><td>03</td><td>Sheet opens instantly with title from map data; body shimmers</td><td>Node with no description shows type + link only</td><td>"Details didn&rsquo;t load." Retry inline; sheet stays open</td><td>Private node: lock icon, "Ask the owner for access"</td><td>Swaps to the 22 variant</td></tr>
+<tr><td>04</td><td>Row skeletons</td><td>"Nothing under this branch yet."</td><td>Inline retry row</td><td>Restricted rows shown as locked, not hidden (structure isn&rsquo;t secret; content is)</td><td>Row shows Soon badge</td></tr>
+<tr><td>05</td><td>Suggestion shimmer after 150&nbsp;ms only</td><td>Recent + suggested families</td><td>"Search is having trouble." Retry</td><td>n/a</td><td>Filters for unbuilt types hidden</td></tr>
+<tr><td>06</td><td>Result skeletons; map view shows pulsing centre</td><td>"No matches for &lsquo;x&rsquo;." Nearest families + Clear filters + Ask AI</td><td>Partial results + "Some sources unavailable"</td><td>Private results excluded silently, never teased</td><td>n/a</td></tr>
+<tr><td>07</td><td>Card skeletons</td><td>Illustration + "Your first map starts with one idea." &rarr; New map</td><td>"Couldn&rsquo;t load your maps." Retry</td><td>Signed out: sign-in prompt with value copy</td><td>n/a</td></tr>
+<tr><td>08</td><td>Button spinner on create</td><td>n/a</td><td>Name conflict inline; network error keeps the modal and the input</td><td>Map quota reached (if any)</td><td>Locked templates carry Soon badge</td></tr>
+<tr><td>09</td><td>Canvas fades in from saved camera</td><td>Fresh map: centre node in edit state + "Add your first branch"</td><td>Save failure &rarr; persistent amber bar, local buffer retained, Retry</td><td>Viewer role: read-only chrome, edit tools absent (not greyed)</td><td>Node types not yet built hidden from picker</td></tr>
+<tr><td>10</td><td>n/a (local)</td><td>Placeholder copy in fields</td><td>Field-level validation</td><td>Commenter: comment field only</td><td>Behaviour options beyond MVP marked Soon in the picker</td></tr>
+<tr><td>11</td><td>Link generation spinner</td><td>n/a</td><td>"Couldn&rsquo;t create the link." Retry</td><td>Editor sees share but cannot change visibility</td><td>Team/domain sharing marked Soon</td></tr>
+<tr><td>12</td><td>Row skeletons</td><td>"Only you so far." &rarr; Invite</td><td>Invalid email inline; send failure with Retry</td><td>Non-admins see the list read-only</td><td>Groups marked Soon</td></tr>
+<tr><td>13</td><td>Message skeletons</td><td>"No messages yet. Say hello."</td><td>Failed send stays in composer with Retry</td><td>Viewer can read, not post; input replaced by explanatory line</td><td>Attachments, calls marked Soon</td></tr>
+<tr><td>14</td><td>Four named stages: Fetching &rarr; Reading &rarr; Structuring &rarr; Laying out</td><td>Thin page: "Not much to work with." Offer manual create</td><td>Unreachable / paywalled / blocked-by-robots: distinct message per cause</td><td>Signed-out users get 1 free run, then sign-in</td><td>Multi-URL and PDF marked Soon</td></tr>
+<tr><td>15</td><td>Chips fade in</td><td>n/a</td><td>Retry loading interests</td><td>n/a</td><td>Interests without content yet are dimmed with a count</td></tr>
+<tr><td>16</td><td>Card skeletons; infinite-scroll spinner</td><td>"Nothing here yet for those interests." &rarr; Broaden</td><td>"Couldn&rsquo;t load more." Retry</td><td>Private community content excluded</td><td>Follow/subscribe marked Soon</td></tr>
+<tr><td>17</td><td>Hero image progressive</td><td>No case studies: capability list only</td><td>Form submit failure preserves entries</td><td>n/a</td><td>Pricing and checkout marked Soon; enquiry is live</td></tr>
+<tr><td>18</td><td>Header + card skeletons</td><td>"No public maps yet."</td><td>Retry</td><td>Blocked user: minimal profile</td><td>Follows, badges marked Soon</td></tr>
+<tr><td>19</td><td>Row skeletons</td><td>"You&rsquo;re all caught up."</td><td>Retry</td><td>n/a</td><td>Digest settings marked Soon</td></tr>
+<tr><td>20</td><td>n/a</td><td>n/a</td><td>Per-field save error with revert</td><td>OAuth-only accounts hide password row</td><td>Data export marked Soon</td></tr>
+<tr><td>21</td><td>Queue skeletons</td><td>"Queue clear."</td><td>Action failure keeps item in queue</td><td>Non-staff: 404, never 403 (do not confirm the route exists)</td><td>Automated-rule config marked Soon</td></tr>
+<tr><td>22</td><td>n/a</td><td>n/a</td><td>Notify-me failure &rarr; inline retry</td><td>Sign-in required to be notified</td><td>This screen <i>is</i> the state</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="s9">
+<h2 class="sec"><i>09</i>Central Radial Map Specification</h2>
+<p>This is the section engineering should be able to build from without a meeting.</p>
+
+<h3>Geometry</h3>
+<p>Polar layout. Ring <em>r</em> has radius <code>R(r) = R0 + r &times; G</code>, with <code>R0 = 148</code>, <code>G = 132</code> at zoom&nbsp;1.0 on mobile; <code>R0 = 190</code>, <code>G = 168</code> on desktop. Nodes within a ring occupy <strong>fixed angular slots</strong>: slot <em>i</em> of <em>n</em> sits at <code>&theta; = -90&deg; + i &times; (360/n)</code>, so node&nbsp;1 is always at twelve o&rsquo;clock. Slots are assigned once and persisted. A node never moves because of engagement.</p>
+<div class="call hard"><span class="lab">Resolving the popularity contradiction</span>
+<p>The recorded requirement &mdash; popular nodes automatically pull toward the centre &mdash; would make position unstable, and position is the only thing a spatial interface has. <strong>Resolution:</strong> popularity is expressed as <em>size and glow intensity</em> within a fixed slot (a hot node grows from 56 to 72&nbsp;px and burns brighter), never as position. Users who want the sorted view get it explicitly through the <strong>Trending lens</strong>, which re-lays the map by rank and is visibly a temporary view &mdash; the lens pill stays lit and a <em>Back to layout</em> control persists. Same insight, no loss of learnability, and it delivers the "least looked at" view for free as an inverted sort.</p></div>
+
+<h3>Centre node behaviour</h3>
+<ul>
+<li>96&nbsp;px mobile / 128&nbsp;px desktop. Lit multi-hue ring, infinity glyph inside, label beneath.</li>
+<li><strong>Anchored, not fixed:</strong> it pans with the canvas but the <em>Recentre</em> control always returns to it in a 420&nbsp;ms ease.</li>
+<li>Tap = collapse everything back to ring one (an instant "home"). Long-press = map info sheet.</li>
+<li>In a user map the centre carries the map name and the owner avatar; the ring uses the map's single chosen hue.</li>
+<li>When you descend, the centre does not vanish &mdash; the <strong>focused parent slides into the centre position</strong> and the true root becomes the first breadcrumb segment. This is the mechanism that makes infinite depth navigable on a small screen.</li>
+</ul>
+
+<h3>Expanding and collapsing</h3>
+<div class="tw"><table>
+<thead><tr><th>Action</th><th>Mobile</th><th>Desktop</th><th>Result</th></tr></thead>
+<tbody>
+<tr><td>Select</td><td>Tap</td><td>Click</td><td>Node highlights, peek label, detail sheet/panel opens</td></tr>
+<tr><td>Open</td><td>Tap CTA in sheet, or double-tap</td><td>Enter, or CTA</td><td>Navigates to the node&rsquo;s destination screen</td></tr>
+<tr><td>Expand</td><td>Long-press 400&nbsp;ms, or Expand in sheet</td><td>Double-click, or <code>&rarr;</code></td><td>Children bloom outward, 260&nbsp;ms staggered 25&nbsp;ms; parent slides toward centre; breadcrumb grows</td></tr>
+<tr><td>Collapse</td><td>Tap parent again</td><td>Click parent, or <code>&larr;</code></td><td>Children retract into parent, 200&nbsp;ms; breadcrumb pops</td></tr>
+<tr><td>Pan</td><td>One-finger drag</td><td>Drag empty canvas, or space+drag</td><td>Camera translate, momentum with 0.92 friction</td></tr>
+<tr><td>Zoom</td><td>Pinch</td><td>Scroll / <code>+</code> <code>&minus;</code> / <code>&#8984;</code>+scroll</td><td>Scale 0.35&ndash;2.4, anchored at gesture midpoint</td></tr>
+<tr><td>Layer step</td><td>Stepper <code>&lang;</code> <code>&rang;</code></td><td>Stepper, <code>PgUp</code>/<code>PgDn</code></td><td>Shifts which ring occupies the centre band, preserving zoom &mdash; the "visual telescope"</td></tr>
+</tbody></table></div>
+<p>Only one branch expands at a time by default (accordion). Multi-expand is available on desktop with <code>&#8984;</code>+expand, and is off on mobile because it destroys the layout at that width.</p>
+
+<h3>Zoom tiers &mdash; how labels and detail appear</h3>
+<div class="tw"><table>
+<thead><tr><th>Tier</th><th>Scale</th><th>Node renders as</th><th>Labels</th></tr></thead>
+<tbody>
+<tr><td>Overview</td><td>&lt; 0.6</td><td>Dot, family hue only, 12&nbsp;px</td><td>Ring-one only; the rest on focus</td></tr>
+<tr><td>Default</td><td>0.6&ndash;1.3</td><td>Circle + icon, 56&ndash;64&nbsp;px</td><td>One line, 18 chars, truncating</td></tr>
+<tr><td>Detail</td><td>1.3&ndash;2.4</td><td>Circle + icon + count badge</td><td>Two lines + node type</td></tr>
+</tbody></table></div>
+<p>Below Overview scale, clusters replace individuals: a group of &ge;6 sibling leaves collapses into one <strong>cluster node</strong> showing the count (<code>+24</code>), which expands on tap. This is the mechanism that keeps thousands of nodes usable, and it must be in the renderer from day one &mdash; retrofitting clustering means rewriting hit-testing.</p>
+
+<h3>Keeping large maps usable</h3>
+<ul>
+<li><strong>Cull</strong> anything outside the viewport plus a 20% margin.</li>
+<li><strong>Cluster</strong> siblings past 6 per parent at Overview scale.</li>
+<li><strong>Cap</strong> simultaneous rendered nodes at 300; beyond that, deepest-first culling with a "zoom in to see more" whisper.</li>
+<li><strong>Dim</strong> non-ancestor branches to 30% when a branch is focused &mdash; focus is the strongest density tool available and costs nothing.</li>
+<li><strong>Defer</strong> glow rendering during active gestures: draw flat during pinch/pan, restore glow on gesture end. Users do not perceive the difference; the frame counter does.</li>
+</ul>
+
+<h3>Selection, focus and detail</h3>
+<p>Selected node: white 2&nbsp;px ring, 4&nbsp;px outer halo, family glow at 100%, scale 1.08, and its connector to the parent brightens end to end. Ancestors stay at 70%; siblings drop to 40%; unrelated branches to 30%. Detail appears as a bottom sheet at 45% height (draggable to 90%) on mobile, and as a persistent 360&nbsp;px right inspector on desktop &mdash; the same component, two presentations.</p>
+
+<h3>Search transforms the map</h3>
+<p>Submitting a query does not navigate away. The camera eases out, matched nodes retain full glow while everything else drops to 15%, and matches from other branches are drawn into a temporary outer ring connected by dashed edges. A bar reads <strong>"Showing 14 matches for &lsquo;patent&rsquo;"</strong> with <em>Clear</em>. Clearing restores the exact prior camera and expansion state &mdash; store it as a single snapshot object before the query runs.</p>
+
+<h3>Future and disabled nodes</h3>
+<p>Dashed 2&nbsp;px stroke, no glow, icon at 45% opacity, node hue desaturated toward the family's grey, and a small <code>SOON</code> badge on the upper-right of the circle. They remain fully tappable &mdash; tapping opens screen&nbsp;22. They are never greyed to the point of looking broken, and never removed, because their presence <em>is</em> the pitch.</p>
+</section>
+
+<section id="s10">
+<h2 class="sec"><i>10</i>Node System Specification</h2>
+
+<h3>Data shape</h3>
+<div class="tw"><table>
+<thead><tr><th>Field</th><th>Type</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>uuid</td><td>Basis of the share URL <code>/n/&lt;id&gt;</code></td></tr>
+<tr><td><code>map_id</code>, <code>parent_id</code></td><td>uuid</td><td>Adjacency list; ring depth derived, not stored</td></tr>
+<tr><td><code>slot</code></td><td>int</td><td>Fixed angular position among siblings</td></tr>
+<tr><td><code>title</code>, <code>description</code></td><td>text</td><td>Title capped at 60 chars; label truncates at 18 on canvas</td></tr>
+<tr><td><code>family</code></td><td>enum</td><td>create &middot; discover &middot; services &middot; people &middot; organise &middot; commerce &mdash; drives hue</td></tr>
+<tr><td><code>type</code></td><td>enum</td><td>topic &middot; link &middot; note &middot; image &middot; date &middot; service &middot; page &middot; cluster</td></tr>
+<tr><td><code>status</code></td><td>enum</td><td>active &middot; inactive &middot; coming_soon</td></tr>
+<tr><td><code>visibility</code></td><td>enum</td><td>inherit &middot; public &middot; private &mdash; enables node-level privacy inside a shared map</td></tr>
+<tr><td><code>icon</code>, <code>payload</code></td><td>text, jsonb</td><td><code>payload</code> is the forward-compatible slot for the eventual behaviour engine. Ship it empty rather than schema-migrating later.</td></tr>
+<tr><td><code>weight</code></td><td>float</td><td>Popularity 0&ndash;1; drives size and glow only</td></tr>
+</tbody></table></div>
+
+<h3>Visual states</h3>
+<div class="specs">
+  <div class="spec"><div class="dot d-hub">&infin;</div><div class="nm">Root</div><div class="ds">Multi-hue lit ring<br>96&thinsp;/&thinsp;128&nbsp;px</div></div>
+  <div class="spec"><div class="dot">ICON</div><div class="nm">Active</div><div class="ds">2px family stroke<br>glow 55%, fill 5%</div></div>
+  <div class="spec"><div class="dot d-sel">ICON</div><div class="nm">Selected</div><div class="ds">White ring + halo<br>scale 1.08</div></div>
+  <div class="spec"><div class="dot d-conn">ICON</div><div class="nm">Connected</div><div class="ds">Ancestor / sibling<br>opacity 70&thinsp;/&thinsp;40%</div></div>
+  <div class="spec"><div class="dot d-inactive">ICON</div><div class="nm">Inactive</div><div class="ds">No glow, grey stroke<br>still selectable</div></div>
+  <div class="spec"><div class="dot d-soon">SOON</div><div class="nm">Coming Soon</div><div class="ds">Dashed stroke<br>orange, no glow</div></div>
+  <div class="spec"><div class="dot d-priv">LOCK</div><div class="nm">Private</div><div class="ds">Violet + lock badge<br>owner-only content</div></div>
+  <div class="spec"><div class="dot d-admin">ADMIN</div><div class="nm">Admin-owned</div><div class="ds">Lime accent<br>staff / map admin</div></div>
+</div>
+<p>Every state differs in <strong>at least two channels</strong> (stroke style, glow, opacity, badge) so none depends on hue alone. Public nodes are simply the default &mdash; there is no "public" decoration, because decorating the norm makes the map noisy.</p>
+
+<h3>Interaction contract</h3>
+<div class="tw"><table>
+<thead><tr><th>Input</th><th>Meaning</th><th>Never</th></tr></thead>
+<tbody>
+<tr><td>Single tap</td><td>Select + open detail</td><td>Never navigates away directly &mdash; too easy to trigger while panning</td></tr>
+<tr><td>Long press</td><td>Expand children (view) / context menu (edit)</td><td>Never deletes</td></tr>
+<tr><td>Double tap</td><td>Open destination</td><td>Never zooms &mdash; suppress browser default on the canvas only</td></tr>
+<tr><td>Drag node</td><td>Reposition (edit mode only)</td><td>Never pans the canvas mid-drag</td></tr>
+<tr><td>Drag onto node</td><td>Connect / reparent (edit mode)</td><td>Never silently reparents without a highlighted drop target</td></tr>
+</tbody></table></div>
+<p>Touch targets are a minimum 88&nbsp;px capsule enclosing circle and label, regardless of the drawn circle size &mdash; hit geometry is separate from visual geometry in the renderer.</p>
+</section>
+
+<section id="s11">
+<h2 class="sec"><i>11</i>Search UX</h2>
+<p>Search is the second navigation model, and for many users it will become the first. It deserves the same care as the map.</p>
+<h4>Field and suggestions</h4>
+<p>Persistent icon in the map top bar; full screen on tap (mobile) or an inline overlay (desktop, <code>/</code> to focus). Suggestions appear after 2 characters, debounced 180&nbsp;ms, grouped and capped at 4 per group: <strong>Nodes &middot; Maps &middot; People &middot; Pages</strong>. Each row shows a family dot, the title, and its breadcrumb path &mdash; path is what makes a result trustworthy in a spatial product. Above suggestions: recent searches as dismissible chips.</p>
+<h4>Filters</h4>
+<p>A single horizontal bar: <em>All</em> &middot; family chips &middot; <em>Type</em> &middot; <em>Live only</em>. "Live only" is important &mdash; it lets a user exclude Coming Soon results, which will otherwise pollute early search badly.</p>
+<h4>Results</h4>
+<p>Default is a list of ResultCards: family dot, title, one-line snippet with matched terms emphasised, breadcrumb path, status chip. A prominent <strong>See as map</strong> toggle switches to the visual result map (&sect;09) &mdash; the query text sits at the centre with a dashed ring, results occupy ring one sorted by relevance, and results sharing a parent are grouped into a shared arc with the parent named on the arc. This is the feature that makes search feel native to CDN rather than bolted on.</p>
+<h4>Web search integration</h4>
+<div class="call assume"><span class="lab">Assumption</span><p>External web search is <em>not</em> in the MVP index. Instead, the results screen ends with one row: <strong>"Not in CDN? Turn a web page into a map"</strong>, which passes the query into Link-to-Mind-Map. This converts the empty-result moment into the showcase feature at zero index cost, and avoids owning a crawler in month one.</p></div>
+<h4>Return path</h4>
+<p>Every search entry captures a camera snapshot. The results screen carries a persistent bottom bar: <strong>&larr; Back to Central Node</strong> (or the map name), restoring camera, zoom, expansion set and selection exactly. Without this, search becomes a trapdoor.</p>
+</section>
+
+<section id="s12">
+<h2 class="sec"><i>12</i>Link-to-Mind-Map UX</h2>
+<p>The single most demonstrable feature in the MVP. It must feel like magic and fail like an adult.</p>
+<div class="tw"><table>
+<thead><tr><th>Step</th><th>What the user sees</th><th>Design notes</th></tr></thead>
+<tbody>
+<tr><td><b>1. Open</b></td><td>Ring node 2, editor toolbar, or the search empty state</td><td>Three entries, one screen. Also accept a URL pasted directly into search &mdash; detect and offer.</td></tr>
+<tr><td><b>2. Paste</b></td><td>Large URL field, paste button, 2&ndash;3 example links</td><td>Examples matter: they set expectations about what works (articles, docs, product pages).</td></tr>
+<tr><td><b>3. Validate</b></td><td>Inline scheme/format check; favicon + page title resolve as a preview chip</td><td>Resolving the title before processing is the trust moment. Do it in &lt;800&nbsp;ms.</td></tr>
+<tr><td><b>4. Process</b></td><td>Four named stages with real progress: Fetching &rarr; Reading &rarr; Structuring &rarr; Laying out</td><td>Never a generic spinner. Named stages make 15&nbsp;s feel like 5. Cancel available throughout.</td></tr>
+<tr><td><b>5. Preview</b></td><td>Generated structure rendered as an actual radial map, plus a side checklist of proposed nodes</td><td>Preview in the real renderer, not a list &mdash; the user must see it is a <i>map</i>. Depth control: 2 or 3 levels.</td></tr>
+<tr><td><b>6. Edit</b></td><td>Toggle nodes off, rename inline, merge two into one, drag to reparent</td><td>Keep it to these four. Full editing happens after save, in the real editor.</td></tr>
+<tr><td><b>7. Confirm</b></td><td>Name field prefilled with the page title; visibility defaults to Private</td><td>Private by default is non-negotiable &mdash; the source may be paywalled or personal.</td></tr>
+<tr><td><b>8. Save</b></td><td>Lands in My Maps; every node carries a source-link chip back to the origin URL</td><td>Attribution on every node is both ethical and useful.</td></tr>
+<tr><td><b>9. Share / return</b></td><td>Standard share sheet; or "Open in editor"</td><td>Reuse screens 11 and 09 exactly. No bespoke variants.</td></tr>
+</tbody></table></div>
+<h4>Failure modes, each with its own message</h4>
+<ul>
+<li><strong>Unreachable</strong> &mdash; "That page didn&rsquo;t respond. Check the link or try another." + Retry.</li>
+<li><strong>Blocked by robots.txt</strong> &mdash; "This site asks not to be read by tools like CDN." No retry; offer manual create. <em>Honour robots.txt. This is a legal and reputational line, not a preference.</em></li>
+<li><strong>Login or paywall</strong> &mdash; "We can only read publicly visible pages." Offer paste-text fallback.</li>
+<li><strong>Too thin</strong> &mdash; "Not much text to work with &mdash; here&rsquo;s a starter map instead," delivering a 3-node stub rather than nothing.</li>
+<li><strong>Model failure / timeout</strong> &mdash; "Structuring took too long." Retry, and log for tuning.</li>
+</ul>
+<div class="call assume"><span class="lab">Assumption</span><p>MVP handles <strong>one public HTML URL at a time</strong>. Batch URLs, PDFs, YouTube and authenticated pages are Coming Soon in the same screen. Consequence: the backend is a fetch + readability extract + one structured LLM call &mdash; roughly a week of work rather than a quarter.</p></div>
+</section>
+
+<section id="s13">
+<h2 class="sec"><i>13</i>Page Watcher UX</h2>
+<p>The recorded description &mdash; pick interests, press Go, scroll community pages &mdash; is clear and should be built exactly that literally. The design risk is that it becomes a generic feed and stops being CDN. The fix is that every card can become a node.</p>
+<ol class="body">
+<li><strong>Open</strong> from ring node 3. The map recedes rather than cutting &mdash; the panel rises over a dimmed, still-visible map so the user never loses their place.</li>
+<li><strong>Choose interests.</strong> A grid of chips, family-tinted, each with a live content count. Multi-select, minimum one, no maximum. Selections persist to the profile and are editable later from the feed header.</li>
+<li><strong>Go.</strong> One full-width button, disabled until a selection exists, showing the count: <em>Go &middot; 4 interests</em>.</li>
+<li><strong>Browse.</strong> A single-column card feed: source, title, excerpt, thumbnail, family dot, and three actions &mdash; <em>Save</em>, <em>Add to map</em>, <em>Share</em>. Cards are ~72% viewport height so one is always dominant.</li>
+<li><strong>Open</strong> an item in an in-app reader with the origin link visible.</li>
+<li><strong>Add to map</strong> opens a compact picker: which map, which parent node. On confirm, a toast: <em>Added to "Research" &middot; View in map</em>.</li>
+<li><strong>Return</strong> &mdash; the panel drops and the map is exactly as it was, with the Page Watcher node briefly pulsing to re-anchor the user.</li>
+</ol>
+<div class="call assume"><span class="lab">Assumption</span><p>Page Watcher browses <strong>CDN community content</strong> (public map pages, service nodes, published projects) &mdash; not the open web. Consequence: it is only as good as the content in the system, so it is genuinely weak at launch. Mitigation: seed 60&ndash;100 pages from existing CDN and partner projects before launch, and let the empty state say honestly that the community is new.</p></div>
+</section>
+
+<section id="s14">
+<h2 class="sec"><i>14</i>User-Created Maps UX</h2>
+<p>The editor must feel like the same world as the Community Map. Same canvas component, same node visuals, edit affordances layered on top.</p>
+<div class="tw"><table>
+<thead><tr><th>Capability</th><th>Interaction</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td><b>Create map</b></td><td>My Maps &rarr; New map &rarr; name + blank/template</td><td>3&ndash;5 templates: Project, Research, Business, Learning, Personal</td></tr>
+<tr><td><b>Starting point</b></td><td>Centre node opens in edit state, cursor in the title field</td><td>Never present an empty canvas &mdash; the centre node is the prompt</td></tr>
+<tr><td><b>Add node</b></td><td>FAB, double-tap empty canvas, or select parent &rarr; <code>Tab</code></td><td>New node auto-slots into the next free angular position</td></tr>
+<tr><td><b>Edit node</b></td><td>Tap &rarr; sheet in edit mode; title inline-editable on canvas</td><td>Title, description, type, icon, family colour, link, visibility</td></tr>
+<tr><td><b>Connect</b></td><td>Drag from node edge handle to target; target highlights</td><td>MVP supports one parent per node plus <i>reference</i> edges (dashed, non-structural)</td></tr>
+<tr><td><b>Delete</b></td><td>Sheet &rarr; Delete, or long-press &rarr; context menu</td><td>Confirm only when children exist: "Delete this and 4 nodes under it?" Undo for 10&nbsp;s</td></tr>
+<tr><td><b>Rearrange</b></td><td>Drag to a new angular slot; siblings reflow live</td><td>Snap to slots by default; <code>Alt</code>+drag for free position</td></tr>
+<tr><td><b>Node behaviour</b></td><td>Type picker in the node sheet</td><td>MVP: topic, link, note, image, date. Everything else in the picker is badged Soon &mdash; this is where the "limitless node" vision lands honestly</td></tr>
+<tr><td><b>Save</b></td><td>Autosave, debounced 800&nbsp;ms; status text reads Saving / Saved / Offline</td><td>No Save button. A Save button in a canvas editor is a bug report waiting to happen</td></tr>
+<tr><td><b>Rename / duplicate</b></td><td>Map menu, or card overflow in My Maps</td><td>Duplicate copies nodes, not collaborators or share links</td></tr>
+<tr><td><b>Share</b></td><td>Screen 11</td><td>See &sect;15</td></tr>
+<tr><td><b>Activity</b></td><td>Map menu &rarr; Activity: who changed what, when</td><td>Append-only log. Cheap to build, disproportionately trust-building</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="s15">
+<h2 class="sec"><i>15</i>Collaboration and Permissions</h2>
+
+<h3>Roles</h3>
+<div class="tw"><table>
+<thead><tr><th>Role</th><th>View</th><th>Edit nodes</th><th>Invite</th><th>Change roles</th><th>Privacy</th><th>Delete map</th></tr></thead>
+<tbody>
+<tr><td><b>Owner</b></td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+<tr><td><b>Admin</b></td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003; (below own)</td><td>&#10003;</td><td>&mdash;</td></tr>
+<tr><td><b>Editor</b></td><td>&#10003;</td><td>&#10003;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+<tr><td><b>Commenter</b></td><td>&#10003;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+<tr><td><b>Viewer</b></td><td>&#10003;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+</tbody></table></div>
+<p>Exactly one Owner; transfer is explicit and confirmed. Admin delegation &mdash; the recorded requirement that a freelancer can be invited to admin a map &mdash; is precisely the Admin role, reached from screen&nbsp;12.</p>
+
+<h3>Visibility model</h3>
+<div class="tw"><table>
+<thead><tr><th>Setting</th><th>Who sees the map</th><th>What they see</th></tr></thead>
+<tbody>
+<tr><td><b>Private</b></td><td>Owner + invited</td><td>Everything their role allows</td></tr>
+<tr><td><b>Link-viewable</b></td><td>Anyone with the link</td><td>Read-only; not indexed, not searchable</td></tr>
+<tr><td><b>Public</b></td><td>Anyone; appears in search and Page Watcher</td><td>Read-only</td></tr>
+<tr><td><b>Node-viewable: on</b></td><td>&mdash;</td><td>Viewers can expand into node detail and follow links</td></tr>
+<tr><td><b>Node-viewable: off</b></td><td>&mdash;</td><td>Viewers see structure, titles and shape &mdash; taps do not open detail. The requested "show the map, not the contents" mode</td></tr>
+</tbody></table></div>
+<p>Individual nodes may override to Private inside an otherwise shared map; they render with the lock state and their subtree is excluded from the share payload server-side. <strong>Never</strong> ship a client-side filter for this &mdash; the data must not leave the server.</p>
+
+<h3>Chat, presence, activity</h3>
+<ul>
+<li><strong>Map chat</strong> is one thread per map, docked right on desktop and a bottom sheet on mobile. Typing <code>#</code> mentions a node and posts a chip that recentres the map when tapped &mdash; this is what makes it map chat rather than a chat box.</li>
+<li><strong>Presence</strong>: avatar stack in the top bar; a coloured ring on nodes another person has selected. No live cursors in MVP.</li>
+<li><strong>Activity</strong>: append-only log with filters by person and action.</li>
+<li><strong>Conflicts</strong>: last-write-wins per field, with a soft lock &mdash; a node being edited by someone else shows their avatar and a subtle pulse, and your edit is refused with "Sam is editing this." Honest, cheap, and sufficient below ~5 concurrent editors. CRDTs are month&nbsp;4+.</li>
+</ul>
+
+<h3>Trust and safety</h3>
+<ul>
+<li><strong>Report</strong> lives in the overflow of every node, map, message and profile. One flow, one component, everywhere.</li>
+<li><strong>Automated screening</strong> on publish-to-public and on every outbound URL: text classification, domain blocklist, known-bad URL check. Private maps are not scanned &mdash; scanning private content is a promise you cannot walk back.</li>
+<li><strong>Moderation queue</strong> (screen 21) with actions: dismiss, warn, unpublish, remove, suspend. Every action written to an audit trail.</li>
+<li><strong>Rate limits</strong> on map creation, invites, chat and Link-to-Mind-Map, which is the main abuse vector (it is a fetcher you are exposing to the internet &mdash; SSRF protections, private-IP blocking and a redirect cap are mandatory, not optional).</li>
+<li><strong>Publish gate</strong>: first time a user makes anything public, a short ToS acknowledgement naming what is not allowed.</li>
+</ul>
+<div class="call hard"><span class="lab">On the stated goal of preventing illicit activity</span>
+<p>"Limitless for everyone, with lawful restrictions" is a genuine tension and it should be resolved in writing before launch, not in a support ticket. The workable MVP position: <strong>private maps are private and unscanned; anything public is screened, reportable and removable; link-out to known-bad domains is blocked in both.</strong> That is defensible, implementable in the MVP window, and does not require moderating a million private documents you have no capacity to review.</p></div>
+</section>
+
+<section id="s16">
+<h2 class="sec"><i>16</i>CDN Design System</h2>
+<p>Derived from the reference screens, corrected for legibility and performance. Everything below is a token; nothing is a one-off.</p>
+
+<h3>Ground and surface</h3>
+<div class="pal">
+  <div class="sw"><div class="band" style="background:#000000"></div><div class="meta"><b>#000000</b><span>ground &mdash; map canvas only</span></div></div>
+  <div class="sw"><div class="band" style="background:#07070C"></div><div class="meta"><b>#07070C</b><span>app background</span></div></div>
+  <div class="sw"><div class="band" style="background:#0D0E17"></div><div class="meta"><b>#0D0E17</b><span>surface / sheets</span></div></div>
+  <div class="sw"><div class="band" style="background:#161930"></div><div class="meta"><b>#161930</b><span>raised / inputs</span></div></div>
+  <div class="sw"><div class="band" style="background:#22253A"></div><div class="meta"><b>#22253A</b><span>border</span></div></div>
+  <div class="sw"><div class="band" style="background:#EDEEF7"></div><div class="meta"><b>#EDEEF7</b><span>ink &mdash; all labels</span></div></div>
+  <div class="sw"><div class="band" style="background:#8C8FA8"></div><div class="meta"><b>#8C8FA8</b><span>muted text</span></div></div>
+</div>
+<p>The map canvas alone uses pure <code>#000000</code>; every panel above it uses <code>#0D0E17</code>. That two-step separation is what lets a sheet read as floating over the network without a heavy shadow, and it is why the neutrals carry a violet bias rather than being true grey.</p>
+
+<h3>Family accents</h3>
+<div class="pal">
+  <div class="sw"><div class="band" style="background:#A3E635"></div><div class="meta"><b>#A3E635</b><span>Create</span></div></div>
+  <div class="sw"><div class="band" style="background:#2FD9F5"></div><div class="meta"><b>#2FD9F5</b><span>Discover</span></div></div>
+  <div class="sw"><div class="band" style="background:#FF8A3D"></div><div class="meta"><b>#FF8A3D</b><span>Services</span></div></div>
+  <div class="sw"><div class="band" style="background:#FF4D97"></div><div class="meta"><b>#FF4D97</b><span>People</span></div></div>
+  <div class="sw"><div class="band" style="background:#8B5CF6"></div><div class="meta"><b>#8B5CF6</b><span>Organise</span></div></div>
+  <div class="sw"><div class="band" style="background:#2DD4BF"></div><div class="meta"><b>#2DD4BF</b><span>Commerce</span></div></div>
+</div>
+<p>Six families, six hues, spaced far enough apart to survive colour-vision deficiency when combined with the icon and the badge. Each has three ramps: <code>--fam-x-core</code> (stroke), <code>--fam-x-glow</code> (core at 55% for the halo), <code>--fam-x-wash</code> (core at 8% for fills). Semantic colours are separate and never reused as accents: success <code>#2DD4BF</code>, warning <code>#FFB020</code>, danger <code>#FF4D6D</code>.</p>
+
+<h3>Typography</h3>
+<div class="tw"><table>
+<thead><tr><th>Role</th><th>Face</th><th>Use</th><th>Spec</th></tr></thead>
+<tbody>
+<tr><td>Display</td><td><b>Chakra Petch</b> 600/700</td><td>Screen titles, node labels, brand chrome</td><td>Angular and technical &mdash; it reads as circuitry without the costume-sci-fi of Orbitron, and stays legible at 12&nbsp;px on canvas</td></tr>
+<tr><td>Body</td><td><b>Inter</b> 400/500</td><td>Descriptions, sheets, forms, chat</td><td>Neutral by design &mdash; the map carries the personality; running UI text should not compete</td></tr>
+<tr><td>Utility</td><td><b>IBM Plex Mono</b> 400/500</td><td>Node numbers, counts, timestamps, IDs, tokens</td><td>Tabular figures; the numbering system from the reference lives here</td></tr>
+</tbody></table></div>
+<p>Scale (mobile / desktop): display-l 28/36 &middot; display-m 22/28 &middot; title 18/20 &middot; body 15/16 &middot; label 13/14 &middot; caption 11/12 &middot; node-label 13/14. Line height 1.2 for display, 1.55 for body. Uppercase labels take 0.16em tracking. <strong>Node labels are always <code>#EDEEF7</code>, never the family hue.</strong></p>
+
+<h3>Elevation and glow</h3>
+<div class="tw"><table>
+<thead><tr><th>Token</th><th>Value</th><th>Applies to</th></tr></thead>
+<tbody>
+<tr><td><code>--glow-0</code></td><td>none</td><td>Inactive, Coming Soon</td></tr>
+<tr><td><code>--glow-1</code></td><td>0 0 10px fam@35%</td><td>Available node, connectors</td></tr>
+<tr><td><code>--glow-2</code></td><td>0 0 18px fam@55%</td><td>Active node</td></tr>
+<tr><td><code>--glow-3</code></td><td>0 0 0 4px #FFF@10%, 0 0 28px fam@75%</td><td>Selected node, root ring</td></tr>
+<tr><td><code>--elev-sheet</code></td><td>0 -1px 0 border, 0 -20px 48px #000@60%</td><td>Sheets, panels &mdash; darkness, not drop shadow</td></tr>
+</tbody></table></div>
+<p><strong>Implementation rule:</strong> <code>--glow-*</code> are design descriptions. On canvas they compile to pre-rendered radial-gradient sprites, one per family per level (18 sprites, cached), composited additively. They are <em>never</em> emitted as live <code>box-shadow</code> or <code>filter</code> on canvas elements. In DOM chrome, box-shadow is fine.</p>
+
+<h3>Shape, spacing, controls</h3>
+<ul>
+<li><strong>Radius:</strong> node = full circle. Sheets 20&nbsp;px top. Cards 12&nbsp;px. Inputs and buttons 10&nbsp;px. Chips 6&nbsp;px. Nothing at 8&nbsp;px everywhere.</li>
+<li><strong>Spacing:</strong> 4&nbsp;px base &mdash; 4, 8, 12, 16, 24, 32, 48, 64. Map geometry uses its own scale (&sect;09) and does not borrow these.</li>
+<li><strong>Buttons:</strong> Primary = family-hue fill at 12% + 1.5&nbsp;px hue stroke + ink label + <code>--glow-1</code> (a solid neon fill would blow out on black). Secondary = border only. Ghost = text. Destructive = danger stroke, fill on press. Height 48 mobile / 40 desktop.</li>
+<li><strong>Inputs:</strong> <code>#161930</code> fill, 1&nbsp;px <code>#22253A</code>, focus = 2&nbsp;px cyan + <code>--glow-1</code>. Search field is pill-shaped; everything else is 10&nbsp;px.</li>
+<li><strong>Cards:</strong> surface fill, 1&nbsp;px border, family dot top-left, no glow. Cards are the calm surface &mdash; glow belongs to the map.</li>
+<li><strong>Map controls:</strong> 44&nbsp;px circular glass buttons &mdash; <code>#0D0E17</code> at 72% with a 1&nbsp;px border and backdrop blur, arranged vertically on the right, thumb-reachable.</li>
+<li><strong>Modals:</strong> centred on desktop (max 480&nbsp;px), bottom sheet on mobile. Scrim <code>#000</code> at 68% with a 2&nbsp;px blur &mdash; enough to push the map back without hiding it.</li>
+</ul>
+
+<h3>Motion</h3>
+<div class="tw"><table>
+<thead><tr><th>Motion</th><th>Duration</th><th>Curve</th><th>Principle</th></tr></thead>
+<tbody>
+<tr><td>Node expand</td><td>260&nbsp;ms, 25&nbsp;ms stagger</td><td>cubic-bezier(.2,.8,.2,1)</td><td>Children emerge <i>from</i> the parent&rsquo;s position, never fade in place</td></tr>
+<tr><td>Collapse</td><td>200&nbsp;ms</td><td>cubic-bezier(.4,0,.7,.2)</td><td>Faster than expansion &mdash; retreat should feel decisive</td></tr>
+<tr><td>Camera / recentre</td><td>420&nbsp;ms</td><td>cubic-bezier(.25,.9,.25,1)</td><td>Always animated; a teleporting camera loses the user</td></tr>
+<tr><td>Sheet</td><td>280&nbsp;ms</td><td>spring, damping .82</td><td>Follows the finger on drag</td></tr>
+<tr><td>Selection</td><td>140&nbsp;ms</td><td>ease-out</td><td>Immediate feedback beats smooth feedback</td></tr>
+<tr><td>Ambient ring breathe</td><td>4&nbsp;s loop, &plusmn;4% opacity</td><td>ease-in-out</td><td>Root node only. The one ambient animation in the product</td></tr>
+</tbody></table></div>
+<p>Under <code>prefers-reduced-motion</code>: all easing collapses to 0&nbsp;ms cross-fades, camera moves become instant, the ambient breathe stops. Ship this in Phase&nbsp;1, not Phase&nbsp;13.</p>
+</section>
+
+<section id="s17">
+<h2 class="sec"><i>17</i>Responsive Design Strategy</h2>
+<div class="tw"><table class="tight">
+<thead><tr><th></th><th>Phone &lt;600</th><th>Tablet 600&ndash;1023</th><th>Desktop 1024&ndash;1599</th><th>Large &ge;1600</th><th>Touch board &ge;2400</th></tr></thead>
+<tbody>
+<tr><td><b>Nav</b></td><td>4-tab bottom bar</td><td>Bottom bar + top actions</td><td>Left icon rail</td><td>Left rail expanded with labels</td><td>Rail bottom-anchored, reachable standing</td></tr>
+<tr><td><b>Detail</b></td><td>Bottom sheet 45&ndash;90%</td><td>Right sheet 380&nbsp;px</td><td>Fixed inspector 360&nbsp;px</td><td>Inspector 400&nbsp;px + activity column</td><td>Floating panel, draggable to any edge</td></tr>
+<tr><td><b>Ring 1 max</b></td><td>8 nodes</td><td>10</td><td>12</td><td>14</td><td>16</td></tr>
+<tr><td><b>Visible rings</b></td><td>1&ndash;2</td><td>2</td><td>2&ndash;3</td><td>3</td><td>3&ndash;4</td></tr>
+<tr><td><b>Node size</b></td><td>56&nbsp;px</td><td>60&nbsp;px</td><td>64&nbsp;px</td><td>68&nbsp;px</td><td>96&nbsp;px</td></tr>
+<tr><td><b>Hit target</b></td><td>88&nbsp;px</td><td>88&nbsp;px</td><td>44&nbsp;px</td><td>44&nbsp;px</td><td>120&nbsp;px</td></tr>
+<tr><td><b>Primary input</b></td><td>Touch</td><td>Touch</td><td>Mouse + keys</td><td>Mouse + keys</td><td>Multi-touch, pen</td></tr>
+<tr><td><b>Node budget</b></td><td>150</td><td>220</td><td>300</td><td>400</td><td>500</td></tr>
+<tr><td><b>Renderer</b></td><td>Canvas 2D</td><td>Canvas 2D</td><td>Canvas 2D</td><td>Canvas 2D / WebGL</td><td>WebGL</td></tr>
+</tbody></table></div>
+<h4>Gestures</h4>
+<p>One finger pans, two fingers pinch-zoom and rotate-lock (rotation is captured and discarded &mdash; capturing it prevents accidental drift), long-press expands, double-tap opens, two-finger tap steps back a layer. On desktop: scroll zooms, space+drag pans, arrow keys traverse siblings, <code>&rarr;</code>/<code>&larr;</code> expand/collapse, <code>/</code> searches, <code>Esc</code> collapses to root.</p>
+<h4>Multi-touch boards &mdash; design now, build later</h4>
+<p>Three decisions taken in the MVP make the eventual 20/40/60-point board work cheap rather than a rewrite: <strong>(1)</strong> the renderer tracks pointers by <code>pointerId</code> from day one, never assuming a single active pointer; <strong>(2)</strong> selection state is a set, not a scalar; <strong>(3)</strong> the detail panel is positionable rather than edge-locked. None of these cost anything now. All three are expensive to retrofit.</p>
+<h4>Performance targets</h4>
+<p>60&nbsp;fps pan/zoom on a 2021 mid-range Android with 150 nodes; &le;2.5&nbsp;s to interactive map on 4G; &le;220&nbsp;KB of critical JS before the canvas paints; map data streamed by ring so ring one renders before ring two arrives.</p>
+</section>
+
+<section id="s18">
+<h2 class="sec"><i>18</i>Component Architecture</h2>
+<p>Thirty-eight components cover all twenty-two screens. If a screen needs a thirty-ninth, that is a signal to re-examine the screen.</p>
+<div class="tw"><table class="tight">
+<thead><tr><th>Group</th><th>Components</th><th>Key props / variants</th></tr></thead>
+<tbody>
+<tr><td><b>Shell</b></td><td>AppShell, TabBar, NavRail, TopBar, SafeArea</td><td>tabs, activeTab, density</td></tr>
+<tr><td><b>Map</b></td><td>MapCanvas, NodeMarker, EdgeLine, ClusterNode, RootNode, SelectionRing, MapControls, LayerStepper, Breadcrumb, LensPill, ViewToggle, MiniMap</td><td>NodeMarker: family, status, size, selected, glowLevel, badge, label, locked</td></tr>
+<tr><td><b>Tree</b></td><td>TreeList, TreeRow, ExpandChevron, FamilyDot</td><td>depth, expanded, status</td></tr>
+<tr><td><b>Panels</b></td><td>DetailSheet, InspectorPanel, ChatPanel, FilterBar</td><td>mode: view / edit / soon / locked &mdash; one component, four modes</td></tr>
+<tr><td><b>Search</b></td><td>SearchField, SuggestionGroup, ResultCard, ResultMap, RecentChips</td><td>group, matchRanges, path</td></tr>
+<tr><td><b>Content</b></td><td>MapCard, ContentCard, ServiceHero, CapabilityList, WorkGrid</td><td>size, visibility, owner</td></tr>
+<tr><td><b>Forms</b></td><td>TextField, TextArea, Select, ToggleRow, ChipGrid, IconPicker, ColorFamilyPicker, UrlField</td><td>state: default / focus / error / disabled</td></tr>
+<tr><td><b>Actions</b></td><td>Button, IconButton, FAB, ActionRow, Menu, ConfirmDialog</td><td>Button: primary / secondary / ghost / destructive &times; sm / md / lg</td></tr>
+<tr><td><b>Permissions</b></td><td>VisibilityPicker, RoleMenu, PersonRow, PendingInvite, LockBadge, PermissionNotice</td><td>role, canEdit, inherited</td></tr>
+<tr><td><b>Feedback</b></td><td>Toast, Skeleton, EmptyState, ErrorState, ComingSoonBlock, ProgressStages, SaveIndicator</td><td>ComingSoonBlock: title, window, notifyState, relatedNodes</td></tr>
+<tr><td><b>Social</b></td><td>Avatar, PresenceStack, NotificationRow, MessageBubble, Composer, ReportAction</td><td>size, presence, unread</td></tr>
+</tbody></table></div>
+<div class="call key"><span class="lab">The three components that decide the project</span>
+<p><strong>MapCanvas</strong> (camera, hit-testing, culling, clustering, pointer model), <strong>NodeMarker</strong> (every visual state in one place), and <strong>DetailSheet</strong> (which must serve view, edit, Coming Soon and locked from a single implementation). Get these three right in Phase 3&ndash;4 and the remaining nineteen screens are assembly. Get them wrong and every later phase pays interest.</p></div>
+</section>
+
+<section id="s19">
+<h2 class="sec"><i>19</i>Design-to-Code Strategy</h2>
+<h4>Naming</h4>
+<p>Design layer names match code exactly: <code>NodeMarker / active / selected / lg</code> in the canvas is <code>&lt;NodeMarker status="active" selected size="lg" /&gt;</code> in React. Screens are named by route (<code>MapScreen</code>, <code>MapEditorScreen</code>), not by content. No file called "Final v3".</p>
+<h4>Tokens</h4>
+<p>One <code>tokens.json</code> is the source of truth, compiled to CSS custom properties for DOM and to a plain JS object for the canvas renderer &mdash; the canvas cannot read CSS variables at draw time, so a build step exporting both is required from Phase&nbsp;1. Never hard-code a hex in a component. Family colours are looked up by family key, never by name.</p>
+<h4>Specifying interaction</h4>
+<p>Each interactive component ships with a state table (default, hover, focus, active, disabled, loading, error) and a motion line naming duration, curve and the property animated. Gestures are specified as: trigger, threshold, feedback, cancel condition, and the outcome if the gesture is interrupted &mdash; that last one is where canvas bugs live.</p>
+<h4>Accessibility contract per component</h4>
+<p>Every component definition carries its role, its keyboard model, its focus-visible treatment, and its screen-reader announcement string. <code>MapCanvas</code>'s contract is explicit: it is <code>aria-hidden</code>, and the TreeList carries the accessible representation. Do not attempt to make a canvas accessible by annotation.</p>
+<h4>Handoff package</h4>
+<p>Per screen: the artboard, the component list with variants, the state table, the copy deck (real strings, ready for translation), the empty/error/loading/permission variants, and the analytics events. Per flow: a state diagram. Per release: a token diff.</p>
+<h4>Decisions deliberately avoided because they are expensive</h4>
+<ul>
+<li>No per-node blur filters, no backdrop-filter on scrolling content, no animated SVG filters &mdash; all are frame-rate traps on mobile.</li>
+<li>No text on curved paths (labels stay horizontal at all zoom levels &mdash; rotated labels are unreadable and untranslatable).</li>
+<li>No layout that depends on exactly twelve nodes; every layout is a function of <em>n</em>.</li>
+<li>No design that requires simultaneous map and full-screen panel on phones.</li>
+<li>No custom scrollbars, no scroll-jacking, no bespoke video codecs.</li>
+</ul>
+</section>
+
+<section id="s20">
+<h2 class="sec"><i>20</i>Phase-by-Phase Implementation Roadmap</h2>
+<div class="call assume"><span class="lab">Assumptions</span><p>2&ndash;3 engineers plus one designer. Stack: React + TypeScript, canvas 2D renderer (WebGL later), Postgres with row-level security, object storage, one LLM API for Link-to-Mind-Map. Weeks are calendar weeks with overlap between phases &mdash; the totals below exceed twelve weeks because design and build run in parallel, not in series.</p></div>
+<div class="tw"><table class="tight">
+<thead><tr><th>Phase</th><th>Objective</th><th>Design + UX work</th><th>Components</th><th>Engineering &amp; data</th><th>Acceptance</th><th>Risk</th></tr></thead>
+<tbody>
+<tr><td><b>P0</b><br>Foundation<br><i>wk 1</i></td><td>Agree scope, IA, flows</td><td>This document ratified; open decisions in &sect;25 closed; success metrics set</td><td>&mdash;</td><td>Repo, CI, environments, analytics plan</td><td>Written sign-off on MVP scope and the four live families</td><td>Scope creep restarting here <span class="chip risk">High</span></td></tr>
+<tr><td><b>P1</b><br>Design system<br><i>wk 1&ndash;2</i></td><td>Tokens and primitives exist in code</td><td>Full token set; type scale; node state sheet; motion spec; both control sets</td><td>Button, TextField, Chip, Card, Sheet, Toast, Skeleton, Avatar</td><td>tokens.json &rarr; CSS vars + JS export; Storybook</td><td>Every primitive rendered in all states in Storybook; reduced-motion honoured</td><td>Token churn later <span class="chip should">Med</span></td></tr>
+<tr><td><b>P2</b><br>Navigation shell<br><i>wk 2</i></td><td>Routing and chrome</td><td>Shell layouts for all 5 breakpoints; empty screens wired</td><td>AppShell, TabBar, NavRail, TopBar</td><td>Router, deep-link scheme, auth-aware guards (stubbed)</td><td>Navigate all 22 routes on phone and desktop</td><td>Low</td></tr>
+<tr><td><b>P3</b><br>Radial map<br><i>wk 2&ndash;4</i></td><td>The core surface</td><td>Map geometry spec, zoom tiers, layer stepper, breadcrumb, tree view</td><td>MapCanvas, RootNode, NodeMarker, EdgeLine, MapControls, LayerStepper, Breadcrumb, TreeList</td><td>Renderer, camera, hit-test, culling, clustering, pointerId model; node schema; Community Map seed data</td><td>60&nbsp;fps with 150 nodes on mid-range Android; tree view matches map exactly</td><td><b>The project&rsquo;s biggest technical risk.</b> Budget a spike week <span class="chip risk">High</span></td></tr>
+<tr><td><b>P4</b><br>Node interaction<br><i>wk 4&ndash;5</i></td><td>Nodes become useful</td><td>Detail sheet in 4 modes; Coming Soon experience; lens</td><td>DetailSheet, InspectorPanel, ActionRow, ComingSoonBlock, LensPill, ViewToggle</td><td>Node detail API, deep links, interest-capture table</td><td>3-tap path to a live destination; every dark node captures interest</td><td>Sheet component sprawl <span class="chip should">Med</span></td></tr>
+<tr><td><b>P5</b><br>Map editor<br><i>wk 5&ndash;7</i></td><td>Users create</td><td>Editor toolbar, node editor, drag/connect/reparent, undo</td><td>MapCanvas(edit), SelectionHandles, EditToolbar, UndoBar, IconPicker, ColorFamilyPicker, TypePicker</td><td>Local-first edit buffer, command stack, autosave debounce, conflict fields</td><td>Blank &rarr; 10-node map in &lt;3&nbsp;min unaided in usability test</td><td>Undo across canvas + form is subtle <span class="chip risk">High</span></td></tr>
+<tr><td><b>P6</b><br>Accounts &amp; save<br><i>wk 6&ndash;7</i></td><td>Work persists</td><td>Sign-in/up, profile, My Maps, quotas</td><td>MapCard, TabSegment, EmptyState, ProfileHeader</td><td>Auth, users, maps, nodes tables with RLS; storage for images; migrations</td><td>Map survives sign-out, device change and offline edit</td><td>RLS mistakes leak data <span class="chip risk">High</span></td></tr>
+<tr><td><b>P7</b><br>Sharing &amp; roles<br><i>wk 7&ndash;8</i></td><td>Maps travel safely</td><td>Share sheet, visibility, node-viewable, collaborators, invites</td><td>ShareSheet, VisibilityPicker, RoleMenu, PersonRow, PendingInvite, LockBadge</td><td>Share tokens, membership table, server-side payload filtering, invite email</td><td>Security review: no private node data in any shared response body</td><td>Node-viewable-off must filter server-side <span class="chip risk">High</span></td></tr>
+<tr><td><b>P8</b><br>Search<br><i>wk 8&ndash;9</i></td><td>Second navigation model</td><td>Field, suggestions, filters, list and map results, return path</td><td>SearchField, SuggestionGroup, ResultCard, ResultMap, FilterBar</td><td>Postgres full-text index; permission-aware queries; camera snapshot store</td><td>&lt;300&nbsp;ms suggestions; map results render; back restores exact state</td><td>Permission leakage via search <span class="chip risk">High</span></td></tr>
+<tr><td><b>P9</b><br>Link-to-Mind-Map<br><i>wk 9&ndash;10</i></td><td>The showcase</td><td>Full flow incl. all five failure states</td><td>UrlField, ProgressStages, StructurePreview, NodeChecklist</td><td>Fetcher with SSRF guards + robots.txt; readability extract; structured LLM call; rate limits; cost cap</td><td>10 varied URLs produce useful maps; every failure has a specific message</td><td>Fetcher is an abuse surface; LLM cost per run <span class="chip risk">High</span></td></tr>
+<tr><td><b>P10</b><br>Page Watcher<br><i>wk 10</i></td><td>Community discovery</td><td>Interest picker, feed, add-to-map</td><td>ChipGrid, ContentCard, InfiniteList</td><td>Content + tag model; seed 60&ndash;100 pages; simple relevance ranking</td><td>Interests &rarr; feed &rarr; node created, in one session</td><td>Cold-start emptiness <span class="chip should">Med</span></td></tr>
+<tr><td><b>P11</b><br>Collaboration<br><i>wk 10&ndash;11</i></td><td>Teams work together</td><td>Chat, presence, activity, notifications</td><td>ChatPanel, MessageBubble, Composer, PresenceStack, NotificationRow</td><td>Realtime channel, messages table, activity log, notification fan-out</td><td>Two accounts co-edit and chat without data loss or lockout</td><td>Realtime cost and reconnection <span class="chip should">Med</span></td></tr>
+<tr><td><b>P12</b><br>Revenue node<br><i>wk 11</i></td><td>First money path</td><td>Service page, capability list, enquiry form, project showcase</td><td>ServiceHero, CapabilityList, WorkGrid, EnquiryForm</td><td>Enquiry table, email routing, spam protection</td><td>Enquiry submitted end-to-end and reaches an inbox</td><td>Low &mdash; do this early if cash matters more than polish</td></tr>
+<tr><td><b>P13</b><br>QA, a11y, security<br><i>wk 11&ndash;12</i></td><td>Fit to ship</td><td>Audit every screen against the state matrix; write the copy deck</td><td>Fixes only &mdash; no new components</td><td>Moderation queue, reporting, rate limits, pen-test pass, load test</td><td>WCAG 2.1 AA on all non-canvas surfaces; tree view fully operable by keyboard and screen reader; no critical findings</td><td>Discovering a11y debt here <span class="chip risk">High</span> &mdash; mitigate by auditing from P3</td></tr>
+<tr><td><b>P14</b><br>Launch<br><i>wk 12</i></td><td>Real users</td><td>Onboarding coach marks, marketing map, launch copy</td><td>&mdash;</td><td>Monitoring, error tracking, backups, rollback plan, support inbox</td><td>Closed beta 20&ndash;50 users; activation and 3-tap metrics instrumented</td><td>Launching without instrumentation <span class="chip risk">High</span></td></tr>
+</tbody></table></div>
+</section>
+
+<section id="s21">
+<h2 class="sec"><i>21</i>Three-Month Roadmap</h2>
+<p>Four states are used precisely: <strong>Designed</strong> = artboards and specs complete &middot; <strong>Prototyped</strong> = clickable, testable, not production &middot; <strong>Built</strong> = merged and working in staging &middot; <strong>Production-ready</strong> = tested, accessible, monitored, live.</p>
+<div class="tw"><table>
+<thead><tr><th>Month</th><th>Designed</th><th>Built</th><th>Production-ready by month end</th></tr></thead>
+<tbody>
+<tr><td><b>1</b><br>Core foundation</td><td>Design system; map spec; screens 01&ndash;10 and 22; tree view; onboarding</td><td>Tokens, primitives, shell, renderer, radial map, node detail, Coming Soon, editor v1</td><td>Design system &middot; navigation shell &middot; Community Map (read-only) &middot; Coming Soon &middot; tree view</td></tr>
+<tr><td><b>2</b><br>Accounts, sharing, search, AI</td><td>Screens 11&ndash;17; permission matrix; chat; moderation; service page</td><td>Auth, cloud save, My Maps, sharing, roles, invites, search + map results, Link-to-Mind-Map, service node</td><td>Accounts &middot; save &middot; My Maps &middot; editor &middot; sharing &amp; privacy &middot; search &middot; enquiry-capable service node</td></tr>
+<tr><td><b>3</b><br>Collaboration, safety, launch</td><td>Screens 18&ndash;21; launch copy; onboarding refinement from test findings</td><td>Chat, presence, activity, notifications, Page Watcher, moderation, reporting; hardening</td><td><b>Everything above plus collaboration, Page Watcher, Link-to-Mind-Map and moderation. Closed beta live.</b></td></tr>
+</tbody></table></div>
+<h4>Honest read on the schedule</h4>
+<p>This is achievable with 2&ndash;3 focused engineers <em>if</em> scope holds. Two things will break it, and both are predictable: the canvas renderer taking three weeks instead of two (mitigate with a hard spike in week 2 and a documented fallback to a DOM/SVG renderer capped at 150 nodes), and scope re-expanding toward payments or the marketplace (mitigate by treating &sect;04 as a contract). The recorded ambition of shipping the whole platform in one month should be set aside now rather than discovered in week five.</p>
+<h4>Milestone gates</h4>
+<ul>
+<li><strong>End of week 4</strong> &mdash; map renders at 60&nbsp;fps with real data, or the fallback renderer decision is taken. No exceptions.</li>
+<li><strong>End of week 8</strong> &mdash; a user can create, save and share a map. If not, cut Page Watcher, not quality.</li>
+<li><strong>End of week 11</strong> &mdash; feature freeze. Week 12 is hardening only.</li>
+</ul>
+</section>
+
+<section id="s22">
+<h2 class="sec"><i>22</i>Six-Month Roadmap</h2>
+<div class="tw"><table>
+<thead><tr><th>Month</th><th>Theme</th><th>Ships</th><th>Turns on</th></tr></thead>
+<tbody>
+<tr><td><b>4</b></td><td>Monetise &amp; deepen</td><td>Payments (Stripe), Pro tier, paid AI tools node, batch and PDF Link-to-Mind-Map, real-time co-editing (CRDT), PNG/PDF export</td><td>Ring nodes 8 (AI Tools) and 11 (Commerce)</td></tr>
+<tr><td><b>5</b></td><td>Marketplace &amp; people</td><td>Freelance profiles, service listings, invite-to-admin flow from a listing, ratings, escrowed payment, follows and profiles</td><td>Ring nodes 6 (People) and 7 (Freelance)</td></tr>
+<tr><td><b>6</b></td><td>Scale &amp; surface</td><td>WebGL renderer, 20/40/60-point multi-touch board mode, integrations (calendar, Drive, Notion), node behaviour engine v1, map analytics, org accounts and roles</td><td>Ring nodes 10 (Organise) and 12 (Partners)</td></tr>
+</tbody></table></div>
+<h4>Advanced AI, sequenced honestly</h4>
+<p>Month 4: multi-source ingestion and AI node suggestions inside the editor. Month 5: conversational map query ("what did I save about patents?"). Month 6: automated map maintenance &mdash; suggested merges, dedupe, stale-link detection. Agent orchestration is a month 7+ conversation and should not be promised before the node behaviour engine exists.</p>
+<h4>Scalability work that must not slip past month 6</h4>
+<p>Server-side layout precomputation for large public maps; CDN-cached map snapshots for read-heavy public maps; ring-by-ring pagination in the API; per-map node ceilings with graceful clustering; and a background job queue for ingestion so the fetcher never runs in a request thread.</p>
+</section>
+
+<section id="s23">
+<h2 class="sec"><i>23</i>Risks and Technical Challenges</h2>
+<div class="tw"><table class="tight">
+<thead><tr><th>Risk</th><th>Impact</th><th>Likelihood</th><th>Mitigation</th></tr></thead>
+<tbody>
+<tr><td><b>Canvas performance on mid-range mobile</b></td><td>Fatal &mdash; the product <i>is</i> the map</td><td>High</td><td>Spike in week 2 with 300 real nodes on a real device. Pre-baked glow sprites, culling, clustering, flat-render-during-gesture. Documented DOM fallback.</td></tr>
+<tr><td><b>Scope re-expansion</b></td><td>Fatal to the timeline</td><td>Very high</td><td>&sect;04 is a contract. New ideas go to a visible "Post-MVP" list, not into the sprint. The Coming Soon map absorbs the emotional need to show scale.</td></tr>
+<tr><td><b>Permission leakage</b> (node-viewable, private nodes, search)</td><td>Severe &mdash; trust and legal</td><td>Medium</td><td>Filter server-side only; row-level security; automated tests asserting private nodes never appear in any response; security review gate in P13.</td></tr>
+<tr><td><b>Link-to-Mind-Map fetcher abuse</b> (SSRF, scraping complaints, cost)</td><td>Severe</td><td>Medium</td><td>Block private IP ranges, cap redirects, honour robots.txt, rate-limit per user, hard monthly LLM spend cap with graceful degradation.</td></tr>
+<tr><td><b>Accessibility retrofit</b></td><td>High &mdash; expensive and possibly legally exposed</td><td>Medium</td><td>Tree view built in P3, not P13. Audit each phase, not at the end.</td></tr>
+<tr><td><b>Empty community at launch</b></td><td>High &mdash; Page Watcher and search feel broken</td><td>High</td><td>Seed 60&ndash;100 real pages. Honest empty states. Consider launching Page Watcher two weeks after the map.</td></tr>
+<tr><td><b>Moderation load</b></td><td>Medium, rising</td><td>Medium</td><td>Automated screening on public content only; small closed beta; clear ToS; queue with audit trail from day one.</td></tr>
+<tr><td><b>Single-developer-team dependency</b></td><td>High</td><td>Medium</td><td>Monthly source hand-off (already agreed), documented architecture, no proprietary build tooling, credentials owned by the client.</td></tr>
+<tr><td><b>Budget vs. ambition mismatch</b></td><td>High</td><td>High</td><td>Ship the revenue node (P12) early &mdash; it is one week of work and the only feature that returns money. Consider moving it to month 1.</td></tr>
+<tr><td><b>Undo/redo across canvas and forms</b></td><td>Medium</td><td>High</td><td>Single command stack from the first editor commit. Retrofitting undo is a rewrite.</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="s24">
+<h2 class="sec"><i>24</i>MVP Acceptance Criteria</h2>
+<h4>Functional &mdash; all must pass</h4>
+<ul>
+<li>A new visitor reaches a live destination in &le;3 taps and &le;25&nbsp;s.</li>
+<li>Pan, zoom, expand, collapse, layer-step and recentre all work on phone and desktop; no state is unreachable or inescapable.</li>
+<li>All 12 ring-one nodes render; the 8 unbuilt ones open a Coming Soon sheet and record interest.</li>
+<li>Search returns permission-correct results in list and map form; back restores the exact prior camera state.</li>
+<li>A signed-in user creates a 10-node map, saves it, reloads on another device, and sees it intact.</li>
+<li>Sharing produces a working link honouring Private / Link-viewable / Public and the node-viewable toggle; a private node never appears in any shared response body.</li>
+<li>An invited Editor can edit; a Viewer cannot; an Admin can invite; the Owner can transfer ownership.</li>
+<li>Map chat delivers messages between two accounts, with node mentions that recentre the map.</li>
+<li>Link-to-Mind-Map produces a useful map from 10 varied public URLs, and gives a specific message for each of the five failure modes.</li>
+<li>Page Watcher: interests &rarr; Go &rarr; feed &rarr; add-to-map, completed in one session.</li>
+<li>An enquiry submitted on the service node arrives in the business inbox.</li>
+<li>Report &rarr; moderation queue &rarr; action &rarr; audit entry works end to end.</li>
+</ul>
+<h4>Quality gates</h4>
+<div class="tw"><table>
+<thead><tr><th>Gate</th><th>Target</th></tr></thead>
+<tbody>
+<tr><td>Map frame rate</td><td>&ge;55&nbsp;fps median, 150 nodes, 2021 mid-range Android</td></tr>
+<tr><td>Time to interactive map</td><td>&le;2.5&nbsp;s on 4G</td></tr>
+<tr><td>Search suggestion latency</td><td>&le;300&nbsp;ms p95</td></tr>
+<tr><td>Accessibility</td><td>WCAG 2.1 AA on all non-canvas surfaces; tree view fully keyboard- and screen-reader-operable</td></tr>
+<tr><td>Reduced motion</td><td>Every animation suppressed or reduced</td></tr>
+<tr><td>Security</td><td>No critical or high findings; RLS verified by automated tests</td></tr>
+<tr><td>Crash-free sessions</td><td>&ge;99.5%</td></tr>
+<tr><td>Every screen</td><td>Loading, empty, error and permission states implemented as specified in &sect;08</td></tr>
+</tbody></table></div>
+<h4>Product signals from the beta &mdash; what "working" means</h4>
+<p>&ge;60% of new users expand at least one node; &ge;30% create a map; &ge;15% share one; &ge;10 Coming Soon interest signals per dark node in the first month (this is your build-order data); &ge;3 service enquiries in the first month.</p>
+</section>
+
+<section id="s25">
+<h2 class="sec"><i>25</i>Next Steps and Open Decisions</h2>
+<h4>Immediate sequence &mdash; the next two weeks</h4>
+<ol class="body">
+<li><strong>Close the seven decisions below.</strong> Nothing else should start first; each one changes downstream design.</li>
+<li><strong>Draw the design canvas in phase order.</strong> There is no separate design track &mdash; the artboards below <em>are</em> the "Design + UX work" column of &sect;20, and each one is named by the phase it belongs to. Design runs roughly two weeks ahead of the build for the same phase, which is why the phase weeks in &sect;20 overlap.</li>
+</ol>
+<div class="tw"><table>
+<thead><tr><th>Order</th><th>Artboards to draw</th><th>Belongs to phase</th><th>Screens covered</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Design-system sheet &mdash; palette, type scale, node states, buttons, inputs, map controls</td><td><b>P1</b></td><td>&mdash; (foundation for all)</td></tr>
+<tr><td>2</td><td>Community Map at three zoom tiers, plus selected state</td><td><b>P3</b></td><td>02, 04</td></tr>
+<tr><td>3</td><td>Node detail in all four modes: view / edit / Coming Soon / locked</td><td><b>P4</b></td><td>03</td></tr>
+<tr><td>4</td><td>Coming Soon experience</td><td><b>P4</b></td><td>22</td></tr>
+<tr><td>5</td><td>Map editor and node editor</td><td><b>P5</b></td><td>07, 08, 09, 10</td></tr>
+<tr><td>6</td><td>Share, privacy, collaborators</td><td><b>P7</b></td><td>11, 12</td></tr>
+<tr><td>7</td><td>Search and results</td><td><b>P8</b></td><td>05, 06</td></tr>
+<tr><td>8</td><td>Link-to-Mind-Map</td><td><b>P9</b></td><td>14</td></tr>
+</tbody></table></div>
+<p><strong>Approval gate:</strong> screens 13 and 15&ndash;21 are not designed until artboards 1&ndash;4 are signed off. They inherit every decision from those four &mdash; sheet behaviour, node visuals, permission treatment &mdash; so drawing them early means drawing them twice.</p>
+<ol class="body" start="3">
+<li><strong>Run the P3 renderer spike in parallel with artboards 1&ndash;2.</strong> The design cannot be validated until someone has drawn 300 glowing nodes on a real phone.</li>
+<li><strong>Test the map with five people</strong> at the end of week 2 using a clickable prototype. Watch specifically for: do they find their way back, and do they understand what a dark node is.</li>
+</ol>
+<h4>Decisions to confirm before implementation</h4>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>Decision</th><th>Recommendation</th><th>If it goes the other way</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Four live families, eight Coming Soon &mdash; is that acceptable?</td><td><b>Yes.</b> It is the difference between shipping and not.</td><td>Every additional live family costs ~1.5 weeks and pushes launch</td></tr>
+<tr><td>2</td><td>Popularity as size/glow rather than position</td><td><b>Adopt.</b> Trending lens gives the sorted view on demand</td><td>Auto-repositioning makes the map unlearnable; expect users to complain that things move</td></tr>
+<tr><td>3</td><td>Ring one re-cut (Page Watcher, Link-to-Mind-Map, Build With Us, Active Projects promoted; Storage/Analytics/Integrations/Marketing demoted)</td><td><b>Adopt.</b> Ring one should be places, not features</td><td>Keeping the original twelve means the MVP&rsquo;s best features are buried at ring two</td></tr>
+<tr><td>4</td><td>Web (responsive + PWA) before native apps</td><td><b>Web first.</b> Deep links, sharing and iteration speed all favour it</td><td>Native doubles the build and adds review cycles before you have validation</td></tr>
+<tr><td>5</td><td>Payments deferred to month 4</td><td><b>Defer</b>, but ship the enquiry-based service node in month 1&ndash;2</td><td>Adding payments to the MVP costs ~2 weeks and pulls in tax, refunds and support</td></tr>
+<tr><td>6</td><td>Private maps are not content-scanned</td><td><b>Adopt</b>, and say so plainly in the privacy policy</td><td>Scanning private content is a promise you cannot un-make, and a moderation load you cannot staff</td></tr>
+<tr><td>7</td><td>Page Watcher browses CDN community content only</td><td><b>Adopt</b>, with seeded content and honest empty states</td><td>Indexing the open web means owning a crawler, and is a quarter of work by itself</td></tr>
+</tbody></table></div>
+<div class="call"><span class="lab">One last thing</span>
+<p>The strongest asset here is not the feature list &mdash; it is that the central node is instantly understandable and genuinely beautiful. Protect that. Every decision in this document that trims scope exists so the map itself gets the engineering attention it needs, because a CDN that does four things on a map that feels alive will beat a CDN that does twenty on a map that stutters.</p></div>
+</section>
+
+<footer>
+Creative Design Networks &mdash; MVP design and implementation blueprint, v1.0<br>
+Prepared against the uploaded reference screens and the recorded product conversation. Sections 03, 11, 12, 13 and 20 contain labelled assumptions; &sect;25 lists the decisions that should be confirmed before build.
+</footer>
+
+</main>
+</div>
+</div>

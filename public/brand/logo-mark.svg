@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 120" role="img" aria-label="Creative Design Networks">
+  <title>Creative Design Networks</title>
+  <!--
+    The CDN infinity mark, authored as vector.
+
+    The supplied brand files are JPEGs, which cannot scale, cannot be recoloured
+    and carry a black box that is visible against any ground that is not exactly
+    #000. This is a faithful reconstruction of that artwork, not a trace: the
+    curve is a true lemniscate and the stops below are the PRODUCT's own token
+    palette, so the logo and the interface share one set of colours.
+
+    If the original vector exists from whoever drew the artwork, replace this
+    file with it — a designer's outlines will beat a reconstruction.
+  -->
+  <defs>
+    <linearGradient id="cdn-mark-stroke" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#2E7BF6"/>
+      <stop offset="18%"  stop-color="#2FD9F5"/>
+      <stop offset="42%"  stop-color="#8B5CF6"/>
+      <stop offset="56%"  stop-color="#FF4D97"/>
+      <stop offset="80%"  stop-color="#FF8A3D"/>
+      <stop offset="100%" stop-color="#FF3D2E"/>
+    </linearGradient>
+
+    <!--
+      The glow. stdDeviation is deliberately small: this mark renders at 28px
+      in the header, where a large blur becomes a smudge, and the filter region
+      is bounded so it does not cost a full-canvas composite.
+    -->
+    <filter id="cdn-mark-glow" x="-25%" y="-45%" width="150%" height="190%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <path id="cdn-lemniscate"
+      d="M120,60 C105,29 85,14 62,14 C33,14 11,34 11,60 C11,86 33,106 62,106
+         C85,106 105,91 120,60 C135,29 155,14 178,14 C207,14 229,34 229,60
+         C229,86 207,106 178,106 C155,106 135,91 120,60 Z"/>
+  </defs>
+
+  <g filter="url(#cdn-mark-glow)" fill="none" stroke="url(#cdn-mark-stroke)" stroke-linecap="round">
+    <!-- The band. -->
+    <use href="#cdn-lemniscate" stroke-width="9"/>
+    <!-- The inner filament, echoing the reference's double-line treatment. -->
+    <use href="#cdn-lemniscate" stroke-width="2" opacity="0.75"
+         transform="translate(120 60) scale(0.82) translate(-120 -60)"/>
+  </g>
+
+  <!-- Node dots. The mark is a network, so it carries nodes. -->
+  <g fill="url(#cdn-mark-stroke)" filter="url(#cdn-mark-glow)">
+    <circle cx="62"  cy="14"  r="4.5"/>
+    <circle cx="20"  cy="33"  r="3.5"/>
+    <circle cx="11"  cy="60"  r="4.5"/>
+    <circle cx="20"  cy="87"  r="3.5"/>
+    <circle cx="62"  cy="106" r="4.5"/>
+    <circle cx="97"  cy="31"  r="3"/>
+    <circle cx="120" cy="60"  r="4"/>
+    <circle cx="143" cy="31"  r="3"/>
+    <circle cx="178" cy="14"  r="4.5"/>
+    <circle cx="220" cy="33"  r="3.5"/>
+    <circle cx="229" cy="60"  r="4.5"/>
+    <circle cx="220" cy="87"  r="3.5"/>
+    <circle cx="178" cy="106" r="4.5"/>
+  </g>
+</svg>

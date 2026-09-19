@@ -1,0 +1,15 @@
+{
+  "folders": [
+    {
+      "path": ".",
+    },
+    {
+      "path": "../creative-desig-network-backendss",
+    },
+  ],
+  "settings": {
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "liveServer.settings.multiRootWorkspaceName": "creative-design-network-screen-design",
+    "liveServer.settings.port": 5501,
+  },
+}

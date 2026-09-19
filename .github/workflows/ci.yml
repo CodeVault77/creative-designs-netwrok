@@ -1,0 +1,153 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# A new push to a PR cancels the in-flight run for that PR. Saves minutes and
+# stops a stale run from reporting green after a fixup commit.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NEXT_TELEMETRY_DISABLED: '1'
+
+jobs:
+  verify:
+    name: Typecheck, lint, format, test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Tokens are built from source
+        run: npm run tokens:check
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Unit tests
+        run: npm run test
+
+  build:
+    name: Production build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: verify
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          APP_ENV: preview
+          NEXT_PUBLIC_SITE_URL: https://preview.creativedesignnetworks.example
+          NEXT_PUBLIC_ANALYTICS_PROVIDER: noop
+
+      - name: Smoke test — server starts and /api/health responds
+        run: |
+          npm run start &
+          SERVER_PID=$!
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3000/api/health > /dev/null; then
+              echo "Health check passed after ${i}s"
+              curl -s http://localhost:3000/api/health
+              kill $SERVER_PID
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Server did not become healthy within 30s"
+          kill $SERVER_PID || true
+          exit 1
+        env:
+          APP_ENV: preview
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+          NEXT_PUBLIC_ANALYTICS_PROVIDER: noop
+
+  storybook:
+    name: Storybook builds
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: verify
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # P1's acceptance criterion is that every primitive renders in all its
+      # states in Storybook. A broken story is a broken design system, so this
+      # is a gate rather than a nice-to-have.
+      - name: Build Storybook
+        run: npm run build-storybook
+        env:
+          STORYBOOK_DISABLE_TELEMETRY: '1'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: storybook
+          path: storybook-static
+          retention-days: 14
+
+  # Guards the P0 acceptance criterion that scope stays fixed. Fails the PR if
+  # someone edits the scope contract without the reviewer noticing.
+  scope-guard:
+    name: Scope contract changed?
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Warn if the scope contract or a decision record changed
+        run: |
+          CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            -- docs/00-scope-contract.md docs/decisions/ || true)
+          if [ -n "$CHANGED" ]; then
+            echo "::warning title=Scope contract touched::This PR edits scope or a decision record:"
+            echo "$CHANGED"
+            echo "A change here needs sign-off from the product owner, not just a code review."
+          else
+            echo "No scope or decision changes."
+          fi

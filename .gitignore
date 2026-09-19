@@ -1,0 +1,54 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# next
+.next/
+out/
+next-env.d.ts
+
+# production
+build/
+dist/
+
+# testing
+coverage/
+playwright-report/
+test-results/
+
+# env — never commit real values
+.env
+.env.local
+.env.*.local
+
+# editor / os
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# misc
+*.tsbuildinfo
+.vercel
+
+# storybook
+storybook-static/
+
+# local database — never commit user data
+.data/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+
+# Screenshots written by verify-landing.mjs for visual review.
+scripts/__screenshots__/

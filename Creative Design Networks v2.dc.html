@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><meta name="design_doc_mode" content="canvas"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"><style>body{margin:0;background:#07070C}a{color:#2FD9F5;text-decoration:none}a:hover{color:#7FE9FA}@keyframes cdnSheet{from{transform:translateY(46px);opacity:0}to{transform:none;opacity:1}}@keyframes cdnFade{from{opacity:0}to{opacity:1}}</style></helmet>
+
+<section style="display:flex;flex-wrap:wrap;gap:56px;align-items:flex-start;padding:56px;background:radial-gradient(900px 600px at 30% 20%,#101228,#07070C 70%);font-family:Inter,system-ui,sans-serif">
+
+<div id="2a" style="display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:center;gap:10px"><div style="padding:3px 9px;border-radius:6px;background:#161930;border:1px solid #22253A;font-family:IBM Plex Mono,monospace;font-size:11px;color:#8C8FA8">2a</div><div style="font-family:Chakra Petch,sans-serif;font-size:15px;font-weight:600;letter-spacing:.4px;color:#EDEEF7">CDN prototype — screens 01–09, 22</div></div>
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" width="{{ 390 }}" height="{{ 844 }}" hint-size="390px,844px">
+<div style="height:844px;box-sizing:border-box;padding:50px 0 30px;display:flex;flex-direction:column;background:#07070C;color:#EDEEF7;font-family:Inter,system-ui,sans-serif;position:relative;overflow:hidden">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="cdnInf" x1="0" y1="12" x2="44" y2="12"><stop offset="0" stop-color="#2F6BF5"></stop><stop offset=".5" stop-color="#C026D3"></stop><stop offset="1" stop-color="#FF7A2B"></stop></linearGradient></defs></svg>
+
+<div style="height:50px;flex:none;display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:1px solid #161930;background:#07070C">
+<svg width="30" height="17" viewBox="0 0 44 24" fill="none" style="flex:none"><g stroke="url(#cdnInf)" stroke-width="2"><path d="M22 12c3-4.6 5.3-7.2 8.8-7.2a7.2 7.2 0 0 1 0 14.4C26.3 19.2 25 16.6 22 12Z"></path><path d="M22 12c-3-4.6-5.3-7.2-8.8-7.2a7.2 7.2 0 0 0 0 14.4C17.7 19.2 19 16.6 22 12Z"></path></g></svg>
+<div style="font-family:Chakra Petch,sans-serif;font-size:13px;font-weight:600;letter-spacing:1.1px;color:#EDEEF7;white-space:nowrap">CREATIVE DESIGN <span style="color:#8B5CF6">NETWORKS</span></div>
+<div style="flex:1"></div>
+<div onClick="{{ goSearch }}" style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer" style-active="background:#161930"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8C8FA8" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg></div>
+<div onClick="{{ openMenu }}" style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer" style-active="background:#161930"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#EDEEF7" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg></div>
+</div>
+
+<sc-if value="{{ showCrumb }}" hint-placeholder-val="{{ true }}">
+<div style="height:32px;flex:none;display:flex;align-items:center;gap:6px;padding:0 14px;border-bottom:1px solid #101223;background:#07070C">
+<sc-for list="{{ crumbs }}" as="c" hint-placeholder-count="2">
+<div onClick="{{ c.go }}" style="display:flex;align-items:center;gap:6px;cursor:pointer">
+<span style="font-size:11.5px;font-weight:500;color:{{ c.color }}">{{ c.t }}</span>
+<span style="font-family:IBM Plex Mono,monospace;font-size:10px;color:#3A3E58">{{ c.sep }}</span>
+</div>
+</sc-for>
+<div style="flex:1"></div>
+<div onClick="{{ toggleView }}" style="display:flex;align-items:center;gap:5px;padding:3px 9px;border-radius:6px;border:1px solid #22253A;background:#0D0E17;cursor:pointer">
+<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8C8FA8" stroke-width="2" stroke-linecap="round"><path d="M4 6h6"></path><path d="M4 12h10"></path><path d="M4 18h7"></path></svg>
+<span style="font-family:IBM Plex Mono,monospace;font-size:9.5px;letter-spacing:.6px;color:#8C8FA8">{{ viewLabel }}</span>
+</div>
+</div>
+</sc-if>
+
+<div style="flex:1;min-height:0;position:relative;background:{{ canvasBg }}">
+
+<sc-if value="{{ isEntry }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="01 Entry" onClick="{{ enter }}" style="position:absolute;inset:0;background:#05060B;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:52px;box-sizing:border-box;cursor:pointer;overflow:hidden">
+<div style="position:absolute;inset:0;background:radial-gradient(360px 260px at 50% 74%,rgba(139,92,246,.20),transparent 72%),radial-gradient(300px 220px at 22% 18%,rgba(47,217,245,.07),transparent 70%)"></div>
+<svg viewBox="0 0 390 200" preserveAspectRatio="none" style="position:absolute;left:0;right:0;bottom:0;width:100%;height:200px;opacity:.5">
+<g stroke="#3B2A6B" stroke-width=".7" fill="none"><path d="M-20 150 120 96 250 148 400 92"></path><path d="M-20 84 96 150 232 88 370 156"></path><path d="M40 200 120 96 96 150 40 200"></path><path d="M250 148 232 88 320 190"></path><path d="M120 96 232 88"></path><path d="M96 150 250 148"></path></g>
+<g fill="#6D4BC9"><circle cx="120" cy="96" r="2"></circle><circle cx="250" cy="148" r="2"></circle><circle cx="96" cy="150" r="1.6"></circle><circle cx="232" cy="88" r="1.6"></circle><circle cx="320" cy="190" r="1.6"></circle></g>
+</svg>
+<div style="position:relative;width:286px;height:286px;border-radius:50%;padding:3px;box-sizing:border-box;background:conic-gradient(from 200deg,#2FD9F5,#3B82F6,#8B5CF6,#C026D3,#FF4D97,#FF8A3D,#FFB020,#2DD4BF,#2FD9F5);box-shadow:0 0 44px rgba(139,92,246,.5)">
+<div style="width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 50% 40%,#0A0A14,#000 76%);display:flex;flex-direction:column;align-items:center;justify-content:center">
+<svg width="130" height="71" viewBox="0 0 44 24" fill="none" style="margin-bottom:12px"><g stroke="url(#cdnInf)" stroke-width="1.5" style="filter:drop-shadow(0 0 5px rgba(192,38,211,.85))"><path d="M22 12c3-4.6 5.3-7.2 8.8-7.2a7.2 7.2 0 0 1 0 14.4C26.3 19.2 25 16.6 22 12Z"></path><path d="M22 12c-3-4.6-5.3-7.2-8.8-7.2a7.2 7.2 0 0 0 0 14.4C17.7 19.2 19 16.6 22 12Z"></path></g><g fill="#4C8DFF"><circle cx="13.2" cy="12" r="1.3"></circle><circle cx="17" cy="7.4" r="1"></circle><circle cx="17" cy="16.6" r="1"></circle></g><g fill="#FF7A2B"><circle cx="30.8" cy="12" r="1.3"></circle><circle cx="27" cy="7.4" r="1"></circle><circle cx="27" cy="16.6" r="1"></circle></g><circle cx="22" cy="12" r="1.2" fill="#E879F9"></circle></svg>
+<div style="font-family:Chakra Petch,sans-serif;font-size:28px;font-weight:700;letter-spacing:2.4px;line-height:1.18;color:#2FD9F5;text-shadow:0 0 16px rgba(47,217,245,.6)">CREATIVE</div>
+<div style="font-family:Chakra Petch,sans-serif;font-size:28px;font-weight:700;letter-spacing:2.4px;line-height:1.18;color:#8B5CF6;text-shadow:0 0 16px rgba(139,92,246,.6)">DESIGN</div>
+<div style="font-family:Chakra Petch,sans-serif;font-size:28px;font-weight:700;letter-spacing:2.4px;line-height:1.18;color:#FF8A3D;text-shadow:0 0 16px rgba(255,138,61,.6)">NETWORKS</div>
+<div style="margin-top:11px;font-size:9.5px;font-weight:500;letter-spacing:4.6px;color:#9FA3B8">THE CENTRAL NODE</div>
+</div>
+</div>
+<div style="position:relative;margin-top:44px;display:flex;flex-direction:column;align-items:center;gap:10px">
+<div style="font-family:Chakra Petch,sans-serif;font-size:17px;font-weight:500;letter-spacing:3.4px;color:#EDEEF7">TAP TO ENTER</div>
+<svg width="42" height="52" viewBox="0 0 42 52" fill="none" stroke="#8B5CF6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 6px rgba(139,92,246,.8))">
+<path d="M15 26V10a4 4 0 0 1 8 0v13"></path><path d="M23 18.5a3.4 3.4 0 0 1 6.8 0V24"></path><path d="M29.8 21.5a3.4 3.4 0 0 1 6.8 0v11.8c0 8.2-5 14.7-12.6 14.7h-3.2C15.4 48 12 44.6 9.4 39L5.6 32c-1-1.9-.3-4 1.5-5 1.7-1 3.8-.4 4.9 1.3L15 33"></path>
+</svg>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isMapCanvas }}" hint-placeholder-val="{{ true }}">
+<div data-screen-label="02 Community Map" style="position:absolute;inset:0;overflow:hidden">
+<div style="position:absolute;inset:0;background:radial-gradient(300px 240px at 50% 50%,rgba(139,92,246,.10),transparent 72%),radial-gradient(220px 180px at 12% 88%,rgba(47,217,245,.05),transparent 70%);pointer-events:none"></div>
+<div style="position:absolute;inset:0;transform:scale({{ mapScale }});transition:transform .42s cubic-bezier(.25,.9,.25,1)">
+<svg viewBox="0 0 390 618" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none">
+<sc-for list="{{ edges }}" as="e" hint-placeholder-count="8">
+<line x1="{{ e.x1 }}" y1="{{ e.y1 }}" x2="{{ e.x2 }}" y2="{{ e.y2 }}" stroke="{{ e.c }}" stroke-width="1" stroke-dasharray="{{ e.dash }}" opacity="{{ e.o }}"></line>
+<circle cx="{{ e.dx }}" cy="{{ e.dy }}" r="1.9" fill="{{ e.c }}" opacity="{{ e.o }}"></circle>
+</sc-for>
+</svg>
+
+<div onClick="{{ tapRoot }}" style="position:absolute;left:195px;top:309px;width:{{ root.size }}px;height:{{ root.size }}px;margin-left:-{{ root.half }}px;margin-top:-{{ root.half }}px;border-radius:50%;padding:2.5px;box-sizing:border-box;background:{{ root.ring }};box-shadow:{{ root.glow }};cursor:pointer;z-index:3">
+<div style="width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 50% 40%,#0A0A14,#000 78%);display:flex;flex-direction:column;align-items:center;justify-content:center;box-sizing:border-box;padding:0 10px">
+<svg width="42" height="23" viewBox="0 0 44 24" fill="none"><g stroke="url(#cdnInf)" stroke-width="1.7" style="filter:drop-shadow(0 0 4px rgba(192,38,211,.8))"><path d="M22 12c3-4.6 5.3-7.2 8.8-7.2a7.2 7.2 0 0 1 0 14.4C26.3 19.2 25 16.6 22 12Z"></path><path d="M22 12c-3-4.6-5.3-7.2-8.8-7.2a7.2 7.2 0 0 0 0 14.4C17.7 19.2 19 16.6 22 12Z"></path></g></svg>
+<div style="margin-top:5px;font-family:Chakra Petch,sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.5px;line-height:1.2;text-align:center;color:#EDEEF7">{{ root.label }}</div>
+</div>
+</div>
+
+<sc-for list="{{ markers }}" as="m" hint-placeholder-count="8">
+<div onClick="{{ m.tap }}" style="position:absolute;left:195px;top:309px;width:88px;margin-left:-44px;margin-top:-{{ m.half }}px;transform:translate({{ m.x }}px,{{ m.y }}px);display:flex;flex-direction:column;align-items:center;cursor:pointer;opacity:{{ m.opacity }};z-index:{{ m.z }};transition:opacity .2s ease">
+<div style="position:relative;width:{{ m.size }}px;height:{{ m.size }}px;border-radius:50%;box-sizing:border-box;display:flex;align-items:center;justify-content:center;border:2px {{ m.stroke }} {{ m.c }};background:{{ m.fill }};box-shadow:{{ m.glow }};color:{{ m.c }};transform:scale({{ m.scale }});transition:transform .14s ease-out">
+<svg width="{{ m.iconSize }}" height="{{ m.iconSize }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" opacity="{{ m.iconOpacity }}"><path d="{{ m.p1 }}"></path><path d="{{ m.p2 }}"></path><path d="{{ m.p3 }}"></path></svg>
+<sc-if value="{{ m.soon }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:-6px;right:-12px;padding:1px 4px;border-radius:4px;background:#0D0E17;border:1px solid #FF8A3D;font-family:IBM Plex Mono,monospace;font-size:7px;letter-spacing:.6px;color:#FF8A3D">SOON</div></sc-if>
+<sc-if value="{{ m.locked }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:-4px;right:-8px;width:15px;height:15px;border-radius:50%;background:#0D0E17;border:1px solid #8B5CF6;display:flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2.6"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg></div></sc-if>
+<sc-if value="{{ m.count }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;bottom:-4px;right:-6px;min-width:16px;height:16px;padding:0 3px;box-sizing:border-box;border-radius:8px;background:#0D0E17;border:1px solid {{ m.c }};display:flex;align-items:center;justify-content:center;font-family:IBM Plex Mono,monospace;font-size:8.5px;color:{{ m.c }}">{{ m.count }}</div></sc-if>
+</div>
+<sc-if value="{{ m.showLabel }}" hint-placeholder-val="{{ true }}">
+<div style="width:100%;margin-top:6px;font-family:Chakra Petch,sans-serif;font-size:{{ m.labelSize }}px;font-weight:600;line-height:1.2;text-align:center;color:{{ m.labelColor }}">{{ m.label }}</div>
+</sc-if>
+<sc-if value="{{ m.sub }}" hint-placeholder-val="{{ false }}">
+<div style="width:100%;margin-top:2px;font-family:IBM Plex Mono,monospace;font-size:8.5px;letter-spacing:.4px;text-align:center;color:#6B6F8A">{{ m.sub }}</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+
+<div style="position:absolute;left:8px;top:50%;margin-top:-38px;display:flex;flex-direction:column;gap:8px">
+<div onClick="{{ layerOut }}" style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#0D0E17;border:1px solid #22253A;cursor:pointer" style-active="border-color:#3A3E58"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#EDEEF7" stroke-width="2" stroke-linecap="round"><path d="m14 5-7 7 7 7"></path></svg></div>
+<div onClick="{{ layerIn }}" style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#0D0E17;border:1px solid #22253A;cursor:pointer" style-active="border-color:#3A3E58"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#EDEEF7" stroke-width="2" stroke-linecap="round"><path d="m10 5 7 7-7 7"></path></svg></div>
+</div>
+
+<div style="position:absolute;right:8px;top:50%;margin-top:-62px;display:flex;flex-direction:column;gap:8px">
+<div onClick="{{ zoomIn }}" style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#0D0E17;border:1px solid #22253A;cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#EDEEF7" stroke-width="2" stroke-linecap="round"><path d="M12 6v12"></path><path d="M6 12h12"></path></svg></div>
+<div onClick="{{ zoomOut }}" style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#0D0E17;border:1px solid #22253A;cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#EDEEF7" stroke-width="2" stroke-linecap="round"><path d="M6 12h12"></path></svg></div>
+<div onClick="{{ recentre }}" style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#0D0E17;border:1px solid #22253A;cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2FD9F5" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v4"></path><path d="M12 18v4"></path><path d="M2 12h4"></path><path d="M18 12h4"></path></svg></div>
+</div>
+
+<div style="position:absolute;left:10px;bottom:10px;display:flex;flex-direction:column;gap:7px;align-items:flex-start">
+<sc-if value="{{ showBackToLayout }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ resetLens }}" style="padding:5px 10px;border-radius:6px;background:rgba(13,14,23,.86);border:1px solid #22253A;font-size:10.5px;color:#8C8FA8;cursor:pointer">← Back to layout</div>
+</sc-if>
+<div onClick="{{ cycleLens }}" style="display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;background:#0D0E17;border:1px solid {{ lens.border }};box-shadow:{{ lens.glow }};cursor:pointer">
+<div style="width:6px;height:6px;border-radius:50%;background:{{ lens.dot }}"></div>
+<span style="font-family:IBM Plex Mono,monospace;font-size:10px;letter-spacing:.8px;color:#EDEEF7">{{ lens.label }}</span>
+</div>
+<div style="font-family:IBM Plex Mono,monospace;font-size:9px;letter-spacing:.7px;color:#4E5270">{{ tierLabel }}</div>
+</div>
+
+<sc-if value="{{ showRotate }}" hint-placeholder-val="{{ true }}">
+<div onClick="{{ rotateRing }}" style="position:absolute;right:10px;bottom:64px;display:flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;background:#0D0E17;border:1px solid #22253A;cursor:pointer">
+<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8C8FA8" stroke-width="2" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-3-6.2"></path><path d="M20 4v4h-4"></path></svg>
+<span style="font-family:IBM Plex Mono,monospace;font-size:9.5px;color:#8C8FA8">{{ rotateLabel }}</span>
+</div>
+</sc-if>
+
+<div onClick="{{ tapFab }}" style="position:absolute;right:10px;bottom:10px;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(163,230,53,.12);border:1.5px solid #A3E635;box-shadow:0 0 18px rgba(163,230,53,.35);cursor:pointer" style-active="transform:scale(.94)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A3E635" stroke-width="2" stroke-linecap="round"><path d="M12 6v12"></path><path d="M6 12h12"></path></svg></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isTree }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="04 Tree view" style="position:absolute;inset:0;overflow:auto;padding:10px 14px 16px;animation:cdnFade .24s ease both">
+<div style="font-family:IBM Plex Mono,monospace;font-size:9.5px;letter-spacing:1.5px;color:#6B6F8A">ACCESSIBLE TREE · SAME DATA AS THE MAP</div>
+<div style="margin-top:10px;border:1px solid #161930;border-radius:12px;overflow:hidden">
+<sc-for list="{{ treeRows }}" as="r" hint-placeholder-count="12">
+<div onClick="{{ r.tap }}" style="display:flex;align-items:center;gap:10px;padding:11px 12px;padding-left:{{ r.indent }}px;border-bottom:1px solid #101223;background:{{ r.bg }};cursor:pointer" style-active="background:#161930">
+<div style="width:7px;height:7px;border-radius:50%;flex:none;background:{{ r.c }};box-shadow:0 0 7px {{ r.g }}"></div>
+<span style="font-family:IBM Plex Mono,monospace;font-size:10px;color:#5A5E7C;min-width:16px">{{ r.num }}</span>
+<span style="flex:1;font-size:12.5px;font-weight:500;color:{{ r.ink }}">{{ r.t }}</span>
+<sc-if value="{{ r.badge }}" hint-placeholder-val="{{ false }}"><span style="padding:1px 5px;border-radius:4px;border:1px solid {{ r.badgeC }};font-family:IBM Plex Mono,monospace;font-size:8px;letter-spacing:.5px;color:{{ r.badgeC }}">{{ r.badge }}</span></sc-if>
+<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3A3E58" stroke-width="2.2" stroke-linecap="round" style="transform:rotate({{ r.rot }}deg)"><path d="m9 5 7 7-7 7"></path></svg>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSearch }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="05 Search" style="position:absolute;inset:0;overflow:auto;padding:12px 14px 16px;animation:cdnFade .24s ease both">
+<div style="display:flex;align-items:center;gap:9px;padding:11px 14px;border-radius:999px;background:#161930;border:2px solid #2FD9F5;box-shadow:0 0 10px rgba(47,217,245,.35)">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2FD9F5" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
+<span style="flex:1;font-size:13px;color:{{ query.color }}">{{ query.text }}</span>
+<sc-if value="{{ hasQuery }}" hint-placeholder-val="{{ false }}"><div onClick="{{ clearQuery }}" style="font-size:11px;color:#8C8FA8;cursor:pointer">Clear</div></sc-if>
+</div>
+
+<sc-if value="{{ hasQuery }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="06 Search results">
+<div style="display:flex;gap:7px;margin-top:12px;overflow:hidden">
+<sc-for list="{{ filters }}" as="f" hint-placeholder-count="4"><div style="padding:5px 10px;border-radius:6px;border:1px solid {{ f.b }};background:{{ f.bg }};font-size:10.5px;color:{{ f.fg }};white-space:nowrap">{{ f.t }}</div></sc-for>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px">
+<div style="font-size:11px;color:#8C8FA8">14 matches for “patent”</div>
+<div onClick="{{ toggleResultMode }}" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;border:1px solid #22253A;background:#0D0E17;font-family:IBM Plex Mono,monospace;font-size:9.5px;color:#2FD9F5;cursor:pointer">{{ resultToggle }}</div>
+</div>
+<sc-if value="{{ resultsAsMap }}" hint-placeholder-val="{{ false }}">
+<div style="position:relative;height:270px;margin-top:12px;border-radius:14px;border:1px solid #161930;background:#000;overflow:hidden">
+<div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:92px;height:92px;border-radius:50%;border:2px dashed #4E5270;display:flex;align-items:center;justify-content:center;text-align:center;font-size:10.5px;color:#8C8FA8;padding:0 10px;box-sizing:border-box">Results for “patent”</div>
+<sc-for list="{{ resultMap }}" as="r" hint-placeholder-count="5">
+<div style="position:absolute;left:50%;top:50%;width:80px;margin-left:-40px;margin-top:-20px;transform:translate({{ r.x }}px,{{ r.y }}px);display:flex;flex-direction:column;align-items:center">
+<div style="width:34px;height:34px;border-radius:50%;border:2px solid {{ r.c }};background:rgba(0,0,0,.6);box-shadow:0 0 10px {{ r.g }}"></div>
+<div style="margin-top:4px;font-family:Chakra Petch,sans-serif;font-size:9.5px;text-align:center;color:#EDEEF7">{{ r.t }}</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ resultsAsList }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+<sc-for list="{{ results }}" as="r" hint-placeholder-count="4">
+<div onClick="{{ r.tap }}" style="padding:12px;border-radius:12px;background:#0D0E17;border:1px solid #22253A;cursor:pointer" style-active="border-color:#3A3E58">
+<div style="display:flex;align-items:center;gap:8px"><div style="width:7px;height:7px;border-radius:50%;background:{{ r.c }}"></div><div style="flex:1;font-size:12.5px;font-weight:600;color:#EDEEF7">{{ r.t }}</div><div style="padding:1px 5px;border-radius:4px;border:1px solid {{ r.chipB }};font-family:IBM Plex Mono,monospace;font-size:8px;color:{{ r.chipB }}">{{ r.chip }}</div></div>
+<div style="margin-top:5px;font-size:11px;line-height:1.4;color:#8C8FA8">{{ r.snip }}</div>
+<div style="margin-top:6px;font-family:IBM Plex Mono,monospace;font-size:9px;letter-spacing:.4px;color:#5A5E7C">{{ r.path }}</div>
+</div>
+</sc-for>
+<div onClick="{{ openLinkToMap }}" style="display:flex;align-items:center;gap:10px;padding:13px;border-radius:12px;border:1px dashed #A3E635;background:rgba(163,230,53,.06);cursor:pointer">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A3E635" stroke-width="1.8" stroke-linecap="round"><path d="M9.6 13.4a4 4 0 0 0 6 .5l2.4-2.4a4.2 4.2 0 0 0-6-6l-1.4 1.4"></path><path d="M14.4 10.6a4 4 0 0 0-6-.5L6 12.5a4.2 4.2 0 0 0 6 6l1.4-1.4"></path></svg>
+<div style="flex:1;font-size:12px;color:#EDEEF7">Not in CDN? Turn a web page into a map</div>
+</div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ noQuery }}" hint-placeholder-val="{{ true }}">
+<div style="margin-top:16px;font-family:IBM Plex Mono,monospace;font-size:9.5px;letter-spacing:1.4px;color:#6B6F8A">RECENT</div>
+<div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:9px">
+<sc-for list="{{ recents }}" as="r" hint-placeholder-count="3"><div onClick="{{ r.tap }}" style="padding:5px 11px;border-radius:6px;background:#161930;border:1px solid #22253A;font-size:11px;color:#EDEEF7;cursor:pointer">{{ r.t }}</div></sc-for>
+</div>
+<div style="margin-top:20px;font-family:IBM Plex Mono,monospace;font-size:9.5px;letter-spacing:1.4px;color:#6B6F8A">SUGGESTED</div>
+<div style="margin-top:9px;display:flex;flex-direction:column;gap:2px">
+<sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="5">
+<div onClick="{{ s.tap }}" style="display:flex;align-items:center;gap:10px;padding:11px 4px;border-bottom:1px solid #101223;cursor:pointer">
+<div style="width:7px;height:7px;border-radius:50%;background:{{ s.c }};box-shadow:0 0 7px {{ s.g }}"></div>
+<div style="flex:1;min-width:0"><div style="font-size:12.5px;color:#EDEEF7">{{ s.t }}</div><div style="font-family:IBM Plex Mono,monospace;font-size:9px;color:#5A5E7C;margin-top:2px">{{ s.path }}</div></div>
+<div style="font-family:IBM Plex Mono,monospace;font-size:9px;color:#6B6F8A">{{ s.group }}</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isMaps }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="07 My Maps" style="position:absolute;inset:0;overflow:auto;padding:12px 14px 16px;animation:cdnFade .24s ease both">
+<div style="display:flex;align-items:center;justify-content:space-between">
+<div style="font-family:Chakra Petch,sans-serif;font-size:22px;font-weight:600">My Maps</div>
+<div onClick="{{ openNewMap }}" style="display:flex;align-items:center;gap:6px;padding:8px 13px;border-radius:10px;background:rgba(163,230,53,.12);border:1.5px solid #A3E635;box-shadow:0 0 10px rgba(163,230,53,.35);cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A3E635" stroke-width="2.4" stroke-linecap="round"><path d="M12 6v12"></path><path d="M6 12h12"></path></svg><span style="font-size:12px;font-weight:600;color:#EDEEF7">New map</span></div>
+</div>
+<div style="display:flex;gap:0;margin-top:14px;padding:3px;border-radius:9px;background:#0D0E17;border:1px solid #22253A">
+<sc-for list="{{ mapTabs }}" as="t" hint-placeholder-count="2"><div onClick="{{ t.tap }}" style="flex:1;text-align:center;padding:7px;border-radius:7px;background:{{ t.bg }};font-size:11.5px;font-weight:500;color:{{ t.fg }};cursor:pointer">{{ t.t }}</div></sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
+<sc-for list="{{ mapCards }}" as="m" hint-placeholder-count="3">
+<div onClick="{{ m.open }}" style="display:flex;align-items:center;gap:13px;padding:12px;border-radius:14px;background:#0D0E17;border:1px solid #22253A;cursor:pointer" style-active="border-color:#3A3E58">
+<div style="width:54px;height:54px;flex:none;border-radius:50%;padding:2px;box-sizing:border-box;background:{{ m.ring }};box-shadow:0 0 12px {{ m.g }}"><div style="width:100%;height:100%;border-radius:50%;background:#000;display:flex;align-items:center;justify-content:center;font-family:IBM Plex Mono,monospace;font-size:11px;color:{{ m.c }}">{{ m.nodes }}</div></div>
+<div style="flex:1;min-width:0">
+<div style="font-family:Chakra Petch,sans-serif;font-size:14px;font-weight:600;color:#EDEEF7">{{ m.t }}</div>
+<div style="margin-top:3px;font-size:10.5px;color:#8C8FA8">{{ m.meta }}</div>
+</div>
+<div style="display:flex;align-items:center;gap:5px;padding:3px 8px;border-radius:5px;border:1px solid {{ m.visB }};font-family:IBM Plex Mono,monospace;font-size:8.5px;letter-spacing:.5px;color:{{ m.visB }}">{{ m.vis }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isEditor }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="09 Map editor" style="position:absolute;inset:0;overflow:hidden;animation:cdnFade .24s ease both">
+<div style="position:absolute;inset:0;background:#000"></div>
+<svg viewBox="0 0 390 618" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none">
+<sc-for list="{{ editEdges }}" as="e" hint-placeholder-count="5">
+<line x1="{{ e.x1 }}" y1="{{ e.y1 }}" x2="{{ e.x2 }}" y2="{{ e.y2 }}" stroke="#A3E635" stroke-width="1" opacity=".45"></line>
+</sc-for>
+</svg>
+<div style="position:absolute;left:195px;top:288px;width:92px;height:92px;margin-left:-46px;margin-top:-46px;border-radius:50%;padding:2px;box-sizing:border-box;background:linear-gradient(140deg,#A3E635,rgba(163,230,53,.2));box-shadow:0 0 26px rgba(163,230,53,.4)">
+<div style="width:100%;height:100%;border-radius:50%;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center">
+<div style="width:22px;height:22px;border-radius:50%;background:#161930;border:1px solid #22253A;display:flex;align-items:center;justify-content:center;font-family:IBM Plex Mono,monospace;font-size:9px;color:#8C8FA8">AR</div>
+<div style="margin-top:5px;font-family:Chakra Petch,sans-serif;font-size:11px;font-weight:600;color:#EDEEF7">Studio OS</div>
+</div>
+</div>
+<sc-for list="{{ editNodes }}" as="n" hint-placeholder-count="5">
+<div onClick="{{ n.tap }}" style="position:absolute;left:195px;top:288px;width:84px;margin-left:-42px;margin-top:-24px;transform:translate({{ n.x }}px,{{ n.y }}px);display:flex;flex-direction:column;align-items:center;cursor:pointer">
+<div style="width:48px;height:48px;border-radius:50%;box-sizing:border-box;border:2px solid #A3E635;background:rgba(163,230,53,.06);box-shadow:{{ n.glow }};display:flex;align-items:center;justify-content:center;transform:scale({{ n.scale }})">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A3E635" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="{{ n.p1 }}"></path><path d="{{ n.p2 }}"></path></svg>
+</div>
+<div style="width:100%;margin-top:6px;font-family:Chakra Petch,sans-serif;font-size:11px;font-weight:600;text-align:center;color:#EDEEF7">{{ n.t }}</div>
+</div>
+</sc-for>
+<div style="position:absolute;left:0;right:0;top:0;display:flex;align-items:center;gap:8px;padding:9px 12px;background:#0D0E17;border-bottom:1px solid #161930">
+<div onClick="{{ exitEditor }}" style="cursor:pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#EDEEF7" stroke-width="2" stroke-linecap="round"><path d="m14 5-7 7 7 7"></path></svg></div>
+<div style="flex:1;font-family:Chakra Petch,sans-serif;font-size:13px;font-weight:600">Studio OS</div>
+<sc-for list="{{ editTools }}" as="t" hint-placeholder-count="3"><div style="width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;border:1px solid #22253A;background:#0D0E17"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8C8FA8" stroke-width="1.9" stroke-linecap="round"><path d="{{ t.p1 }}"></path><path d="{{ t.p2 }}"></path></svg></div></sc-for>
+</div>
+<div style="position:absolute;left:12px;bottom:12px;display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:6px;background:rgba(13,14,23,.86);border:1px solid #22253A">
+<div style="width:6px;height:6px;border-radius:50%;background:#2DD4BF"></div><span style="font-family:IBM Plex Mono,monospace;font-size:9.5px;color:#8C8FA8">Saved · autosave on</span>
+</div>
+<div onClick="{{ addNode }}" style="position:absolute;right:12px;bottom:12px;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(163,230,53,.12);border:1.5px solid #A3E635;box-shadow:0 0 18px rgba(163,230,53,.35);cursor:pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A3E635" stroke-width="2" stroke-linecap="round"><path d="M12 6v12"></path><path d="M6 12h12"></path></svg></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isYou }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="18 You" style="position:absolute;inset:0;overflow:auto;padding:14px 14px 16px;animation:cdnFade .24s ease both">
+<div style="display:flex;align-items:center;gap:13px">
+<div style="width:60px;height:60px;flex:none;border-radius:50%;padding:2px;box-sizing:border-box;background:conic-gradient(from 200deg,#2FD9F5,#8B5CF6,#FF4D97,#FF8A3D,#2FD9F5);box-shadow:0 0 18px rgba(139,92,246,.4)"><div style="width:100%;height:100%;border-radius:50%;background:#0D0E17;display:flex;align-items:center;justify-content:center;font-family:Chakra Petch,sans-serif;font-size:17px;font-weight:600;color:#EDEEF7">AR</div></div>
+<div><div style="font-family:Chakra Petch,sans-serif;font-size:17px;font-weight:600">Amara Reyes</div><div style="font-family:IBM Plex Mono,monospace;font-size:10.5px;color:#8C8FA8;margin-top:2px">@amara · Lagos</div></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px">
+<sc-for list="{{ youStats }}" as="s" hint-placeholder-count="3"><div style="padding:12px 8px;border-radius:12px;background:#0D0E17;border:1px solid #22253A;text-align:center"><div style="font-family:IBM Plex Mono,monospace;font-size:17px;color:{{ s.c }}">{{ s.v }}</div><div style="margin-top:3px;font-family:IBM Plex Mono,monospace;font-size:8.5px;letter-spacing:.8px;color:#6B6F8A">{{ s.k }}</div></div></sc-for>
+</div>
+<div style="margin-top:18px;font-family:IBM Plex Mono,monospace;font-size:9.5px;letter-spacing:1.4px;color:#6B6F8A">ACCOUNT</div>
+<div style="margin-top:8px;border-radius:12px;overflow:hidden;border:1px solid #22253A">
+<sc-for list="{{ accountRows }}" as="r" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:10px;padding:12px;border-bottom:1px solid #101223;background:#0D0E17" style-active="background:#161930">
+<div style="flex:1;font-size:12.5px;color:#EDEEF7">{{ r.t }}</div>
+<div style="font-family:IBM Plex Mono,monospace;font-size:10px;color:#6B6F8A">{{ r.v }}</div>
+<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3A3E58" stroke-width="2.2" stroke-linecap="round"><path d="m9 5 7 7-7 7"></path></svg>
+</div>
+</sc-for>
+</div>
+<div style="margin-top:18px;font-family:IBM Plex Mono,monospace;font-size:9.5px;letter-spacing:1.4px;color:#6B6F8A">SETTINGS</div>
+<div style="margin-top:8px;border-radius:12px;overflow:hidden;border:1px solid #22253A">
+<sc-for list="{{ settingRows }}" as="r" hint-placeholder-count="4">
+<div style="display:flex;align-items:center;gap:10px;padding:12px;border-bottom:1px solid #101223;background:#0D0E17" style-active="background:#161930">
+<div style="flex:1;font-size:12.5px;color:#EDEEF7">{{ r.t }}</div>
+<div style="font-family:IBM Plex Mono,monospace;font-size:10px;color:#6B6F8A">{{ r.v }}</div>
+<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3A3E58" stroke-width="2.2" stroke-linecap="round"><path d="m9 5 7 7-7 7"></path></svg>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+</div>
+
+<div style="height:64px;flex:none;display:flex;align-items:flex-start;padding:8px 4px 0;border-top:1px solid #161930;background:#07070C">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+<div onClick="{{ t.tap }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer">
+<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="{{ t.c }}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{ t.p1 }}"></path><path d="{{ t.p2 }}"></path><path d="{{ t.p3 }}"></path></svg>
+<div style="font-size:9.5px;font-weight:500;color:{{ t.c }}">{{ t.t }}</div>
+</div>
+</sc-for>
+</div>
+
+<sc-if value="{{ sheet.open }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:50;background:rgba(0,0,0,.72)"></div>
+<div data-screen-label="03 Node detail" style="position:absolute;left:0;right:0;bottom:0;z-index:51;max-height:76%;overflow:auto;border-radius:20px 20px 0 0;background:#0D0E17;border-top:1px solid #22253A;box-shadow:0 -20px 48px rgba(0,0,0,.6);padding:10px 16px 22px;box-sizing:border-box;animation:cdnSheet .28s cubic-bezier(.2,.9,.25,1) both">
+<div style="width:36px;height:4px;border-radius:99px;background:#22253A;margin:0 auto 14px"></div>
+<div style="display:flex;align-items:flex-start;gap:11px">
+<div style="width:44px;height:44px;flex:none;border-radius:50%;box-sizing:border-box;display:flex;align-items:center;justify-content:center;border:2px {{ sheet.stroke }} {{ sheet.c }};background:{{ sheet.fill }};box-shadow:{{ sheet.glow }};color:{{ sheet.c }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{ sheet.p1 }}"></path><path d="{{ sheet.p2 }}"></path><path d="{{ sheet.p3 }}"></path></svg></div>
+<div style="flex:1;min-width:0">
+<div style="display:flex;align-items:center;gap:7px">
+<span style="font-family:IBM Plex Mono,monospace;font-size:10px;color:#6B6F8A">{{ sheet.num }}</span>
+<sc-if value="{{ sheet.badge }}" hint-placeholder-val="{{ false }}"><span style="padding:1px 6px;border-radius:4px;border:1px solid {{ sheet.badgeC }};font-family:IBM Plex Mono,monospace;font-size:8.5px;letter-spacing:.7px;color:{{ sheet.badgeC }}">{{ sheet.badge }}</span></sc-if>
+</div>
+<div style="margin-top:4px;font-family:Chakra Petch,sans-serif;font-size:19px;font-weight:600;line-height:1.2;text-wrap:pretty">{{ sheet.title }}</div>
+</div>
+<div onClick="{{ closeSheet }}" style="width:28px;height:28px;flex:none;border-radius:8px;display:flex;align-items:center;justify-content:center;border:1px solid #22253A;cursor:pointer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8C8FA8" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg></div>
+</div>
+<div style="margin-top:12px;font-size:12.5px;line-height:1.5;color:#8C8FA8;text-wrap:pretty">{{ sheet.desc }}</div>
+
+<sc-if value="{{ sheet.isEdit }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+<div><div style="font-family:IBM Plex Mono,monospace;font-size:9px;letter-spacing:1.2px;color:#6B6F8A">TITLE</div><div style="margin-top:6px;padding:11px 12px;border-radius:10px;background:#161930;border:2px solid #2FD9F5;box-shadow:0 0 10px rgba(47,217,245,.3);font-size:13px;color:#EDEEF7">{{ sheet.title }}</div></div>
+<div><div style="font-family:IBM Plex Mono,monospace;font-size:9px;letter-spacing:1.2px;color:#6B6F8A">TYPE</div>
+<div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap"><sc-for list="{{ typeOptions }}" as="o" hint-placeholder-count="5"><div style="padding:6px 10px;border-radius:6px;border:1px solid {{ o.b }};background:{{ o.bg }};font-size:11px;color:{{ o.fg }}">{{ o.t }}</div></sc-for></div></div>
+<div><div style="font-family:IBM Plex Mono,monospace;font-size:9px;letter-spacing:1.2px;color:#6B6F8A">FAMILY</div>
+<div style="display:flex;gap:9px;margin-top:8px"><sc-for list="{{ familySwatches }}" as="f" hint-placeholder-count="6"><div style="width:26px;height:26px;border-radius:50%;box-sizing:border-box;background:{{ f.wash }};border:2px solid {{ f.c }};box-shadow:{{ f.glow }}"></div></sc-for></div></div>
+<div style="display:flex;gap:9px;margin-top:4px">
+<div onClick="{{ closeSheet }}" style="flex:1;text-align:center;padding:12px;border-radius:10px;background:rgba(163,230,53,.12);border:1.5px solid #A3E635;box-shadow:0 0 10px rgba(163,230,53,.3);font-size:12.5px;font-weight:600;color:#EDEEF7;cursor:pointer">Done</div>
+<div style="padding:12px 16px;border-radius:10px;border:1.5px solid #FF4D6D;font-size:12.5px;color:#FF4D6D;cursor:pointer">Delete</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sheet.isSoon }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="22 Coming Soon" style="margin-top:14px">
+<div style="display:flex;gap:9px">
+<div style="flex:1;padding:11px;border-radius:10px;background:#161930;border:1px solid #22253A"><div style="font-family:IBM Plex Mono,monospace;font-size:8.5px;letter-spacing:1px;color:#6B6F8A">TARGET</div><div style="margin-top:4px;font-family:Chakra Petch,sans-serif;font-size:13px;color:#FF8A3D">{{ sheet.window }}</div></div>
+<div style="flex:1;padding:11px;border-radius:10px;background:#161930;border:1px solid #22253A"><div style="font-family:IBM Plex Mono,monospace;font-size:8.5px;letter-spacing:1px;color:#6B6F8A">INTEREST</div><div style="margin-top:4px;font-family:Chakra Petch,sans-serif;font-size:13px;color:#EDEEF7">{{ sheet.interest }}</div></div>
+</div>
+<div onClick="{{ notifyMe }}" style="margin-top:11px;text-align:center;padding:13px;border-radius:10px;background:{{ notify.bg }};border:1.5px solid {{ notify.border }};box-shadow:{{ notify.glow }};font-size:12.5px;font-weight:600;color:#EDEEF7;cursor:pointer">{{ notify.label }}</div>
+<div style="margin-top:16px;font-family:IBM Plex Mono,monospace;font-size:9px;letter-spacing:1.2px;color:#6B6F8A">LIVE NOW INSTEAD</div>
+<div style="display:flex;gap:7px;margin-top:8px;flex-wrap:wrap">
+<sc-for list="{{ relatedLive }}" as="r" hint-placeholder-count="3"><div onClick="{{ r.tap }}" style="display:flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;background:#161930;border:1px solid {{ r.c }};cursor:pointer"><div style="width:5px;height:5px;border-radius:50%;background:{{ r.c }}"></div><span style="font-size:11px;color:#EDEEF7">{{ r.t }}</span></div></sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sheet.isLocked }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:14px;display:flex;align-items:center;gap:11px;padding:13px;border-radius:12px;background:#161930;border:1px solid #22253A">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="1.8"><rect x="4" y="10.5" width="16" height="10.5" rx="2.5"></rect><path d="M7.5 10.5V7.5a4.5 4.5 0 0 1 9 0v3"></path></svg>
+<div style="flex:1;font-size:12px;line-height:1.45;color:#8C8FA8">This node is private. Structure is visible; contents are not.</div>
+</div>
+<div style="margin-top:11px;text-align:center;padding:13px;border-radius:10px;background:rgba(139,92,246,.12);border:1.5px solid #8B5CF6;box-shadow:0 0 10px rgba(139,92,246,.3);font-size:12.5px;font-weight:600;color:#EDEEF7;cursor:pointer">Ask the owner for access</div>
+</sc-if>
+
+<sc-if value="{{ sheet.isView }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:14px;border-radius:12px;overflow:hidden;border:1px solid #22253A">
+<sc-for list="{{ sheet.meta }}" as="m" hint-placeholder-count="4">
+<div style="display:flex;align-items:center;padding:10px 12px;border-bottom:1px solid #101223;background:#161930">
+<div style="flex:1;font-family:IBM Plex Mono,monospace;font-size:9.5px;letter-spacing:.9px;color:#6B6F8A">{{ m.k }}</div>
+<div style="font-size:11.5px;color:#EDEEF7">{{ m.v }}</div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:9px;margin-top:12px">
+<div onClick="{{ openNode }}" style="flex:1;text-align:center;padding:13px;border-radius:10px;background:{{ sheet.wash }};border:1.5px solid {{ sheet.c }};box-shadow:{{ sheet.btnGlow }};font-size:12.5px;font-weight:600;color:#EDEEF7;cursor:pointer">Open</div>
+<sc-if value="{{ sheet.canExpand }}" hint-placeholder-val="{{ true }}"><div onClick="{{ expandNode }}" style="padding:13px 15px;border-radius:10px;border:1.5px solid #22253A;font-size:12.5px;color:#EDEEF7;cursor:pointer">Expand</div></sc-if>
+<div style="width:46px;display:flex;align-items:center;justify-content:center;border-radius:10px;border:1.5px solid #22253A;cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8C8FA8" stroke-width="1.8" stroke-linecap="round"><path d="M12 15V3"></path><path d="m8 7 4-4 4 4"></path><path d="M4 14v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"></path></svg></div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ showNewMap }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:50;background:rgba(0,0,0,.72)"></div>
+<div data-screen-label="08 New map" style="position:absolute;left:0;right:0;bottom:0;z-index:51;border-radius:20px 20px 0 0;background:#0D0E17;border-top:1px solid #22253A;padding:10px 16px 22px;box-sizing:border-box;animation:cdnSheet .28s cubic-bezier(.2,.9,.25,1) both">
+<div style="width:36px;height:4px;border-radius:99px;background:#22253A;margin:0 auto 14px"></div>
+<div style="font-family:Chakra Petch,sans-serif;font-size:18px;font-weight:600">New map</div>
+<div style="margin-top:12px;font-family:IBM Plex Mono,monospace;font-size:9px;letter-spacing:1.2px;color:#6B6F8A">NAME</div>
+<div style="margin-top:6px;padding:11px 12px;border-radius:10px;background:#161930;border:2px solid #2FD9F5;box-shadow:0 0 10px rgba(47,217,245,.3);font-size:13px;color:#8C8FA8">Untitled map</div>
+<div style="margin-top:14px;font-family:IBM Plex Mono,monospace;font-size:9px;letter-spacing:1.2px;color:#6B6F8A">START FROM</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+<sc-for list="{{ templates }}" as="t" hint-placeholder-count="4"><div style="padding:11px;border-radius:10px;background:#161930;border:1px solid {{ t.b }}"><div style="font-size:12px;font-weight:600;color:#EDEEF7">{{ t.t }}</div><div style="margin-top:3px;font-size:10px;color:#8C8FA8">{{ t.m }}</div></div></sc-for>
+</div>
+<div onClick="{{ createMap }}" style="margin-top:14px;text-align:center;padding:13px;border-radius:10px;background:rgba(163,230,53,.12);border:1.5px solid #A3E635;box-shadow:0 0 10px rgba(163,230,53,.3);font-size:12.5px;font-weight:600;color:#EDEEF7;cursor:pointer">Create map · Private</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showMenu }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:52;background:rgba(0,0,0,.72)"></div>
+<div style="position:absolute;top:0;right:0;bottom:0;width:248px;z-index:53;background:#0D0E17;border-left:1px solid #22253A;padding:64px 16px 30px;box-sizing:border-box;animation:cdnFade .2s ease both">
+<div style="font-family:IBM Plex Mono,monospace;font-size:9.5px;letter-spacing:1.4px;color:#6B6F8A">MENU</div>
+<div style="margin-top:10px;display:flex;flex-direction:column">
+<sc-for list="{{ menuItems }}" as="m" hint-placeholder-count="5">
+<div onClick="{{ m.tap }}" style="display:flex;align-items:center;gap:10px;padding:12px 2px;border-bottom:1px solid #101223;cursor:pointer"><div style="width:6px;height:6px;border-radius:50%;background:{{ m.c }};box-shadow:0 0 7px {{ m.c }}"></div><div style="flex:1;font-size:12.5px;color:#EDEEF7">{{ m.t }}</div></div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+</div>
+</x-import>
+</div>
+
+<div id="2b" style="width:660px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:center;gap:10px"><div style="padding:3px 9px;border-radius:6px;background:#161930;border:1px solid #22253A;font-family:IBM Plex Mono,monospace;font-size:11px;color:#8C8FA8">2b</div><div style="font-family:Chakra Petch,sans-serif;font-size:15px;font-weight:600;letter-spacing:.4px;color:#EDEEF7">CDN design system — artboard 1</div></div>
+<div style="padding:26px;border-radius:18px;background:#0D0E17;border:1px solid #22253A;display:flex;flex-direction:column;gap:26px">
+
+<div>
+<div style="font-family:IBM Plex Mono,monospace;font-size:9.5px;letter-spacing:1.5px;color:#6B6F8A">GROUND &amp; SURFACE</div>
+<div style="display:flex;gap:8px;margin-top:10px">
+<sc-for list="{{ dsNeutrals }}" as="n" hint-placeholder-count="7">
+<div style="flex:1"><div style="height:46px;border-radius:8px;background:{{ n.hex }};border:1px solid #22253A"></div><div style="margin-top:5px;font-family:IBM Plex Mono,monospace;font-size:8.5px;color:#EDEEF7">{{ n.hex }}</div><div style="font-size:9.5px;color:#6B6F8A">{{ n.role }}</div></div>
+</sc-for>
+</div>
+</div>
+
+<div>
+<div style="font-family:IBM Plex Mono,monospace;font-size:9.5px;letter-spacing:1.5px;color:#6B6F8A">SIX FAMILIES — HUE CARRIES MEANING</div>
+<div style="display:flex;gap:10px;margin-top:10px">
+<sc-for list="{{ dsFamilies }}" as="f" hint-placeholder-count="6">
+<div style="flex:1;padding:12px;border-radius:12px;background:#161930;border:1px solid #22253A">
+<div style="width:34px;height:34px;border-radius:50%;box-sizing:border-box;border:2px solid {{ f.c }};background:{{ f.wash }};box-shadow:{{ f.glow }}"></div>
+<div style="margin-top:9px;font-family:Chakra Petch,sans-serif;font-size:12px;font-weight:600;color:#EDEEF7">{{ f.name }}</div>
+<div style="margin-top:2px;font-family:IBM Plex Mono,monospace;font-size:8.5px;color:#6B6F8A">{{ f.c }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="display:flex;gap:26px">
+<div style="flex:1">
+<div style="font-family:IBM Plex Mono,monospace;font-size:9.5px;letter-spacing:1.5px;color:#6B6F8A">TYPE</div>
+<div style="margin-top:10px;display:flex;flex-direction:column;gap:9px">
+<div><div style="font-family:Chakra Petch,sans-serif;font-size:28px;font-weight:600;line-height:1.15">Chakra Petch 600</div><div style="font-family:IBM Plex Mono,monospace;font-size:9px;color:#6B6F8A;margin-top:2px">display-l 28 · titles, node labels, chrome</div></div>
+<div><div style="font-size:15px;color:#EDEEF7">Inter 400 — descriptions, sheets, forms and chat text.</div><div style="font-family:IBM Plex Mono,monospace;font-size:9px;color:#6B6F8A;margin-top:2px">body 15 / 1.55</div></div>
+<div><div style="font-family:IBM Plex Mono,monospace;font-size:13px;color:#EDEEF7">IBM Plex Mono — 07 · 14:32 · #A3E635</div><div style="font-family:IBM Plex Mono,monospace;font-size:9px;color:#6B6F8A;margin-top:2px">utility · node numbers, counts, tokens</div></div>
+</div>
+</div>
+<div style="flex:1">
+<div style="font-family:IBM Plex Mono,monospace;font-size:9.5px;letter-spacing:1.5px;color:#6B6F8A">GLOW = STATE CHANNEL</div>
+<div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ dsGlow }}" as="g" hint-placeholder-count="4">
+<div style="display:flex;align-items:center;gap:11px"><div style="width:34px;height:34px;border-radius:50%;box-sizing:border-box;border:2px {{ g.stroke }} {{ g.c }};background:{{ g.fill }};box-shadow:{{ g.glow }}"></div><div><div style="font-size:11.5px;color:#EDEEF7">{{ g.t }}</div><div style="font-family:IBM Plex Mono,monospace;font-size:8.5px;color:#6B6F8A">{{ g.token }}</div></div></div>
+</sc-for>
+</div>
+</div>
+</div>
+
+<div>
+<div style="font-family:IBM Plex Mono,monospace;font-size:9.5px;letter-spacing:1.5px;color:#6B6F8A">CONTROLS</div>
+<div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap">
+<div style="padding:12px 20px;border-radius:10px;background:rgba(163,230,53,.12);border:1.5px solid #A3E635;box-shadow:0 0 10px rgba(163,230,53,.35);font-size:13px;font-weight:600;color:#EDEEF7">Primary</div>
+<div style="padding:12px 20px;border-radius:10px;border:1.5px solid #22253A;font-size:13px;color:#EDEEF7">Secondary</div>
+<div style="padding:12px 14px;font-size:13px;color:#2FD9F5">Ghost</div>
+<div style="padding:12px 20px;border-radius:10px;border:1.5px solid #FF4D6D;font-size:13px;color:#FF4D6D">Destructive</div>
+<div style="flex:1;min-width:170px;padding:12px;border-radius:10px;background:#161930;border:2px solid #2FD9F5;box-shadow:0 0 10px rgba(47,217,245,.3);font-size:13px;color:#8C8FA8">Focused input</div>
+<div style="display:flex;gap:7px"><sc-for list="{{ dsControls }}" as="c" hint-placeholder-count="3"><div style="width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(13,14,23,.72);border:1px solid #22253A"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#EDEEF7" stroke-width="2" stroke-linecap="round"><path d="{{ c.p1 }}"></path><path d="{{ c.p2 }}"></path></svg></div></sc-for></div>
+</div>
+</div>
+
+<div>
+<div style="font-family:IBM Plex Mono,monospace;font-size:9.5px;letter-spacing:1.5px;color:#6B6F8A">MOTION</div>
+<div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:7px">
+<sc-for list="{{ dsMotion }}" as="m" hint-placeholder-count="6">
+<div style="display:flex;align-items:baseline;gap:8px;padding:8px 10px;border-radius:8px;background:#161930"><div style="flex:1;font-size:11px;color:#EDEEF7">{{ m.t }}</div><div style="font-family:IBM Plex Mono,monospace;font-size:9.5px;color:#8C8FA8">{{ m.v }}</div></div>
+</sc-for>
+</div>
+</div>
+
+</div>
+</div>
+
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1220,&quot;height&quot;:1080},&quot;glowIntensity&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;low&quot;,&quot;medium&quot;,&quot;high&quot;],&quot;default&quot;:&quot;medium&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Map&quot;},&quot;reducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Map&quot;}}">
+const FAM = {
+  create:   { name: "Create",   c: "#A3E635" },
+  discover: { name: "Discover", c: "#2FD9F5" },
+  services: { name: "Services", c: "#FF8A3D" },
+  people:   { name: "People",   c: "#FF4D97" },
+  organise: { name: "Organise", c: "#8B5CF6" },
+  commerce: { name: "Commerce", c: "#2DD4BF" }
+};
+const ICONS = {
+  map:["M3 6.5 9.5 3.5 15 6.5 21 3.5v14L15 20.5 9.5 17.5 3 20.5z","M9.5 3.5v14","M15 6.5v14"],
+  link:["M9.6 13.4a4 4 0 0 0 6 .5l2.4-2.4a4.2 4.2 0 0 0-6-6l-1.4 1.4","M14.4 10.6a4 4 0 0 0-6-.5L6 12.5a4.2 4.2 0 0 0 6 6l1.4-1.4"],
+  eye:["M2 12s3.6-6.4 10-6.4S22 12 22 12s-3.6 6.4-10 6.4S2 12 2 12z","M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0"],
+  code:["m8.5 8.5-4 3.5 4 3.5","m15.5 8.5 4 3.5-4 3.5","M13.6 5.5l-3.2 13"],
+  layers:["M12 3 3 8l9 5 9-5z","M3 13l9 5 9-5","M3 17.5l9 5 9-5"],
+  users:["M16 20v-1.8a3.6 3.6 0 0 0-3.6-3.6H6.6A3.6 3.6 0 0 0 3 18.2V20","M13.3 7.6a3.8 3.8 0 1 1-7.6 0 3.8 3.8 0 0 1 7.6 0","M18.4 14.7a3.6 3.6 0 0 1 2.6 3.5V20"],
+  bag:["M4 8.5h16a1.5 1.5 0 0 1 1.5 1.5v9a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 19v-9A1.5 1.5 0 0 1 4 8.5z","M9 8.5V6a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 6v2.5","M2.5 13h19"],
+  spark:["M12 2.8 14.2 9l6.2 2.2-6.2 2.2L12 19.6 9.8 13.4 3.6 11.2 9.8 9z"],
+  bulb:["M9.4 18.4h5.2","M10.5 21.4h3","M15 14c.2-1 .7-1.8 1.4-2.5A4.7 4.7 0 0 0 18 8a6 6 0 0 0-12 0c0 1 .2 2.2 1.5 3.5.7.7 1.2 1.5 1.4 2.5"],
+  cal:["M5 4.6h14a2 2 0 0 1 2 2v12.8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6.6a2 2 0 0 1 2-2z","M8 2.5v4","M3 10.4h18"],
+  card:["M3 6.5h18a1.5 1.5 0 0 1 1.5 1.5v9a1.5 1.5 0 0 1-1.5 1.5H3A1.5 1.5 0 0 1 1.5 17V8A1.5 1.5 0 0 1 3 6.5z","M1.5 11h21","M5 15h4"],
+  heart:["M12 20.4S3.6 15 3.6 9.6A4.5 4.5 0 0 1 12 7.1a4.5 4.5 0 0 1 8.4 2.5c0 5.4-8.4 10.8-8.4 10.8z"],
+  file:["M13.6 2.8H7a2 2 0 0 0-2 2v14.4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.2z","M13.6 2.8v5.4H19"],
+  note:["M5 3.5h14a1.5 1.5 0 0 1 1.5 1.5v14A1.5 1.5 0 0 1 19 20.5H5A1.5 1.5 0 0 1 3.5 19V5A1.5 1.5 0 0 1 5 3.5z","M7.5 8.5h9","M7.5 13h6"],
+  search:["M11 4a7 7 0 1 1 0 14 7 7 0 0 1 0-14","m20 20-3.6-3.6"],
+  grid:["M4 4h7v7H4z","M13 4h7v7h-7z","M4 13h7v7H4z"],
+  user:["M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2","M16 7.2a4 4 0 1 1-8 0 4 4 0 0 1 8 0"],
+  undo:["M4 9h11a4.5 4.5 0 0 1 0 9H8","M4 9l4-4","M4 9l4 4"],
+  connect:["M8 12h8","M8 12a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"],
+  chat:["M20 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.3A8 8 0 1 1 20 12z"],
+  plus:["M12 6v12","M6 12h12"],
+  minus:["M6 12h12"],
+  target:["M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8","M12 2v4"]
+};
+const NODES = [
+  { n:1, t:"Mind Mapping", label:"Mind Mapping", fam:"create", icon:"map", status:"live", type:"topic", w:.94,
+    desc:"Create and open your own maps — blank, from a template, or generated from a link.",
+    children:[{t:"My Maps",icon:"grid"},{t:"Templates",icon:"file"},{t:"Shared with me",icon:"users"},{t:"Private notes",icon:"note",priv:true},{t:"Archive",icon:"layers"}] },
+  { n:2, t:"Link-to-Mind-Map", label:"Link-to-Map", fam:"create", icon:"link", status:"live", type:"topic", w:.88,
+    desc:"Paste one public URL and get an editable radial map back, with source attribution on every node.",
+    children:[{t:"Paste a URL",icon:"link"},{t:"Examples",icon:"file"},{t:"Recent imports",icon:"layers"},{t:"Batch & PDF",icon:"file",soon:true}] },
+  { n:3, t:"Page Watcher", label:"Page Watcher", fam:"discover", icon:"eye", status:"live", type:"page", w:.71,
+    desc:"Pick the interests you care about and browse community pages as a feed. Any card can become a node.",
+    children:[{t:"Interests",icon:"spark"},{t:"Feed",icon:"note"},{t:"Saved",icon:"layers"},{t:"Follows",icon:"users",soon:true}] },
+  { n:4, t:"Build With Us", label:"Build With Us", fam:"services", icon:"code", status:"live", type:"service", w:.83,
+    desc:"Full-stack, web, mobile and game development by the CDN studio. Tell us about the project.",
+    children:[{t:"Web",icon:"code"},{t:"Mobile",icon:"card"},{t:"Game dev",icon:"spark"},{t:"Start a project",icon:"note"}] },
+  { n:5, t:"Active Projects", label:"Active Projects", fam:"services", icon:"layers", status:"live", type:"page", w:.64,
+    desc:"A live portfolio of what the studio is building right now, and what has shipped.",
+    children:[{t:"In build",icon:"code"},{t:"Shipped",icon:"layers"},{t:"Case studies",icon:"file"}] },
+  { n:6, t:"People & Networks", label:"People", fam:"people", icon:"users", status:"soon", type:"topic", w:.58, window:"Month 5", interest:"214 asked", desc:"Profiles, follows and the people layer of the network." },
+  { n:7, t:"Freelance & Marketplace", label:"Freelance", fam:"services", icon:"bag", status:"soon", type:"topic", w:.55, window:"Month 5", interest:"186 asked", desc:"Listings, ratings and escrowed payment between clients and freelancers." },
+  { n:8, t:"AI Tools", label:"AI Tools", fam:"create", icon:"spark", status:"soon", type:"topic", w:.62, window:"Month 4", interest:"301 asked", desc:"Paid AI capabilities beyond Link-to-Mind-Map: suggestions, queries, map maintenance." },
+  { n:9, t:"Ideas & Innovation", label:"Ideas", fam:"discover", icon:"bulb", status:"soon", type:"topic", w:.47, window:"Month 6", interest:"92 asked", desc:"Capture, collect and vote on ideas across the community." },
+  { n:10, t:"Tasks, Calendar & Projects", label:"Tasks & Calendar", fam:"organise", icon:"cal", status:"soon", type:"topic", w:.44, window:"Month 6", interest:"128 asked", desc:"Boards, timelines and reminders attached to the nodes they belong to." },
+  { n:11, t:"Commerce & Payments", label:"Commerce", fam:"commerce", icon:"card", status:"soon", type:"topic", w:.41, window:"Month 4", interest:"157 asked", desc:"Wallets, invoicing and paid nodes." },
+  { n:12, t:"Partners & Sponsors", label:"Partners", fam:"people", icon:"heart", status:"soon", type:"topic", w:.33, window:"Month 6", interest:"64 asked", desc:"Who backs CDN, and how to back it." }
+];
+const TIERS = { overview:{ scale:.74, count:12 }, default:{ scale:1, count:8 }, detail:{ scale:1.34, count:8 } };
+const LENSES = [
+  { k:"all", label:"LENS · ALL", dot:"#8C8FA8" },
+  { k:"active", label:"LENS · ACTIVE ONLY", dot:"#A3E635" },
+  { k:"trending", label:"LENS · TRENDING", dot:"#FF8A3D" },
+  { k:"mine", label:"LENS · MINE", dot:"#2FD9F5" }
+];
+const rgba = (hex, a) => { const n = parseInt(hex.slice(1),16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; };
+const ico = (k) => { const p = ICONS[k] || []; return { p1:p[0], p2:p[1], p3:p[2] }; };
+
+class Component extends DCLogic {
+  state = { screen:"entry", tab:"map", view:"map", tier:"default", path:[], focus:null, sheet:null, lens:"all",
+            offset:0, query:"", resultMode:"list", mapTab:"mine", overlay:null, notified:false };
+
+
+  glowFor(hex, level){
+    const mult = { low:.6, medium:1, high:1.45 }[this.props.glowIntensity ?? "medium"];
+    if (level === 0) return "none";
+    if (level === 1) return `0 0 ${10*mult}px ${rgba(hex,.35)}`;
+    if (level === 2) return `0 0 ${18*mult}px ${rgba(hex,.55)}`;
+    return `0 0 0 4px rgba(255,255,255,.10), 0 0 ${28*mult}px ${rgba(hex,.75)}`;
+  }
+
+  currentParent(){ const p = this.state.path; return p.length ? NODES.find(n => n.n === p[p.length-1]) : null; }
+
+  levelNodes(){
+    const parent = this.currentParent();
+    if (!parent) return NODES;
+    return (parent.children || []).map((c, i) => ({
+      n: i+1, t: c.t, label: c.t.length > 18 ? c.t.slice(0,17) + "…" : c.t, fam: parent.fam, icon: c.icon,
+      status: c.soon ? "soon" : "live", priv: c.priv, type: "topic", w:.5, child:true,
+      desc: c.priv ? "Only you can open this node." : `A branch of ${parent.t}.`,
+      window: c.soon ? "Month 4" : null, interest: c.soon ? "48 asked" : null
+    }));
+  }
+
+  openSheet(node){
+    const mode = node.priv ? "locked" : node.status === "soon" ? "soon" : this.state.screen === "editor" ? "edit" : "view";
+    this.setState({ sheet:{ node, mode }, focus: node.n });
+  }
+
+  renderVals(){
+    const s = this.state, tier = TIERS[s.tier], motionOn = !(this.props.reducedMotion ?? false);
+    const level = this.levelNodes();
+    const parent = this.currentParent();
+    const isChildLevel = !!parent;
+    const count = isChildLevel ? level.length : Math.min(tier.count, level.length);
+    const list = isChildLevel ? level : Array.from({length:count}, (_,i) => level[(i + s.offset) % level.length]);
+
+    const rx = s.tier === "overview" ? 128 : 118, ry = s.tier === "overview" ? 158 : 150;
+    const markers = [], edges = [];
+    list.forEach((nd, i) => {
+      const a = (-90 + i * (360/count)) * Math.PI/180;
+      const cosA = Math.cos(a), sinA = Math.sin(a);
+      const x = Math.round(cosA * rx), y = Math.round(sinA * ry);
+      const fam = FAM[nd.fam], soon = nd.status === "soon", locked = !!nd.priv;
+      const selected = s.focus === nd.n && !!s.sheet;
+      const hidden = (s.lens === "active" && soon) || (s.lens === "mine" && nd.fam !== "create");
+      const trending = s.lens === "trending";
+      let size = s.tier === "overview" ? 16 : s.tier === "detail" ? 62 : 52;
+      if (trending && s.tier !== "overview") size = Math.round(size * (0.86 + nd.w * 0.28));
+      const glowLvl = soon ? 0 : selected ? 3 : 1;
+      markers.push({
+        ...ico(nd.icon), label: nd.label, c: fam.c, x, y, size, half: Math.round(size/2) + 8,
+        iconSize: s.tier === "overview" ? 0 : Math.round(size * .42),
+        iconOpacity: soon ? .45 : 1,
+        fill: soon ? "rgba(13,14,23,.6)" : rgba(fam.c, .08),
+        stroke: soon ? "dashed" : "solid",
+        glow: this.glowFor(fam.c, glowLvl),
+        scale: selected ? 1.08 : 1,
+        opacity: hidden ? .12 : selected ? 1 : s.focus && s.sheet ? .55 : 1,
+        z: selected ? 4 : 2,
+        soon: soon && s.tier !== "overview", locked,
+        count: s.tier === "detail" && nd.children ? "+" + nd.children.length : "",
+        showLabel: true, labelSize: s.tier === "overview" ? 8.5 : 11.5,
+        labelColor: soon ? "#8C8FA8" : "#EDEEF7",
+        sub: s.tier === "detail" ? nd.type : trending ? "rank " + (i+1) : "",
+        tap: () => this.openSheet(nd)
+      });
+      const rootR = (s.tier === "overview" ? 68 : 48) + 4;
+      const L = Math.hypot(x, y) || 1, ux = x/L, uy = y/L;
+      edges.push({ x1: 195 + ux*rootR, y1: 309 + uy*rootR, x2: 195 + x - ux*(size/2+3), y2: 309 + y - uy*(size/2+3),
+        c: fam.c, dash: soon ? "3 4" : "0", o: hidden ? .08 : soon ? .3 : .5,
+        dx: 195 + x - ux*(size/2+13), dy: 309 + y - uy*(size/2+13) });
+    });
+
+    const rootSize = s.tier === "overview" ? 84 : 96;
+    const root = {
+      size: rootSize, half: rootSize/2,
+      label: parent ? parent.label : "Central Node",
+      ring: parent ? `linear-gradient(140deg,${FAM[parent.fam].c},${rgba(FAM[parent.fam].c,.18)})`
+                   : "conic-gradient(from 200deg,#2FD9F5,#3B82F6,#8B5CF6,#C026D3,#FF4D97,#FF8A3D,#FFB020,#2DD4BF,#2FD9F5)",
+      glow: parent ? this.glowFor(FAM[parent.fam].c, 3) : "0 0 34px rgba(139,92,246,.55), 0 0 90px rgba(47,217,245,.16)"
+    };
+
+    const crumbs = [{ t:"CDN", color:"#8C8FA8", sep:"›", go: () => this.setState({ path:[], focus:null, sheet:null }) }];
+    if (parent) {
+      crumbs.push({ t: FAM[parent.fam].name, color:"#8C8FA8", sep:"›", go: () => this.setState({ path:[] }) });
+      crumbs.push({ t: parent.t, color:"#EDEEF7", sep:"", go: () => {} });
+    } else { crumbs[0].sep = "›"; crumbs.push({ t:"Central Node", color:"#EDEEF7", sep:"", go: () => {} }); }
+
+    const sheetNode = s.sheet ? s.sheet.node : null;
+    const sheetMode = s.sheet ? s.sheet.mode : "view";
+    const sheetFam = sheetNode ? FAM[sheetNode.fam] : FAM.create;
+    const sheet = {
+      open: !!s.sheet && !s.overlay,
+      ...(sheetNode ? ico(sheetNode.icon) : {}),
+      title: sheetNode ? sheetNode.t : "",
+      desc: sheetNode ? sheetNode.desc : "",
+      num: sheetNode ? (sheetNode.child ? "RING 2 · " : "NODE ") + String(sheetNode.n).padStart(2,"0") : "",
+      c: sheetFam.c, fill: rgba(sheetFam.c,.08), wash: rgba(sheetFam.c,.12),
+      stroke: sheetMode === "soon" ? "dashed" : "solid",
+      glow: sheetMode === "soon" ? "none" : this.glowFor(sheetFam.c, 2),
+      btnGlow: this.glowFor(sheetFam.c, 1),
+      badge: sheetMode === "soon" ? "COMING SOON" : sheetMode === "locked" ? "PRIVATE" : sheetMode === "edit" ? "EDITING" : sheetFam.name.toUpperCase(),
+      badgeC: sheetMode === "soon" ? "#FF8A3D" : sheetMode === "locked" ? "#8B5CF6" : sheetFam.c,
+      isView: sheetMode === "view", isSoon: sheetMode === "soon", isLocked: sheetMode === "locked", isEdit: sheetMode === "edit",
+      canExpand: !!(sheetNode && sheetNode.children && sheetNode.children.length),
+      window: sheetNode ? sheetNode.window : "", interest: sheetNode ? sheetNode.interest : "",
+      meta: sheetNode ? [
+        { k:"FAMILY", v: sheetFam.name }, { k:"TYPE", v: sheetNode.type || "topic" },
+        { k:"CHILDREN", v: sheetNode.children ? String(sheetNode.children.length) : "0" },
+        { k:"STATUS", v:"Live" }
+      ] : []
+    };
+
+    const lensDef = LENSES.find(l => l.k === s.lens) || LENSES[0];
+    const tabDef = [["Map","map","map"],["Search","search","search"],["My Maps","grid","maps"],["You","user","you"]];
+
+    const treeRows = [];
+    NODES.forEach(nd => {
+      const fam = FAM[nd.fam], soon = nd.status === "soon", open = s.path.includes(nd.n);
+      treeRows.push({ t: nd.t, num: String(nd.n).padStart(2,"0"), c: fam.c, g: rgba(fam.c,.5), indent:12,
+        bg:"#0D0E17", ink: soon ? "#8C8FA8" : "#EDEEF7", badge: soon ? "SOON" : "", badgeC:"#FF8A3D",
+        rot: open ? 90 : 0, tap: () => this.setState({ path: open ? [] : [nd.n], view:"map", tier:"default" }) });
+      if (open && nd.children) nd.children.forEach(c => treeRows.push({
+        t: c.t, num:"", c: fam.c, g: rgba(fam.c,.3), indent:34, bg:"#0A0A14",
+        ink: c.priv ? "#8C8FA8" : "#EDEEF7", badge: c.priv ? "LOCKED" : c.soon ? "SOON" : "", badgeC: c.priv ? "#8B5CF6" : "#FF8A3D",
+        rot:0, tap: () => {} }));
+    });
+
+    const resultDef = [["Patent research map","create","MAP","Radial map · 24 nodes","CDN › Create › Mind Mapping"],
+      ["Patents & IP — Build With Us","services","NODE","Filing support inside the studio brief","CDN › Services › Build With Us"],
+      ["Ife Okonkwo","people","PERSON","Wrote 3 public maps on IP","CDN › People"],
+      ["Design patents, in plain words","discover","PAGE","Community page · 6 min read","CDN › Discover › Page Watcher"]];
+    const results = resultDef.map(([t,f,chip,snip,path]) => ({ t, c:FAM[f].c, chip, chipB:FAM[f].c, snip, path,
+      tap: () => this.setState({ screen:"map", tab:"map", query:"", sheet:null }) }));
+    const resultMap = [[0,-96],[92,-30],[58,78],[-58,78],[-92,-30]].map(([x,y],i) => {
+      const f = ["create","services","people","discover","create"][i];
+      return { x, y, c:FAM[f].c, g:rgba(FAM[f].c,.4), t:["Patent map","Build With Us","Ife O.","Design patents","IP notes"][i] };
+    });
+
+    return {
+      isEntry: s.screen === "entry",
+      isMapCanvas: s.screen === "map" && s.view === "map",
+      isTree: s.screen === "map" && s.view === "tree",
+      isSearch: s.screen === "search", isMaps: s.screen === "maps", isEditor: s.screen === "editor", isYou: s.screen === "you",
+      showCrumb: s.screen === "map",
+      canvasBg: s.screen === "map" || s.screen === "editor" ? "#000000" : "#07070C",
+      mapScale: tier.scale, tierLabel: s.tier.toUpperCase() + " · " + count + " OF 12",
+      markers, edges, root, crumbs,
+      viewLabel: s.view === "map" ? "TREE" : "MAP",
+      lens: { label: lensDef.label, dot: lensDef.dot, border: s.lens === "all" ? "#22253A" : rgba(lensDef.dot,.55),
+              glow: s.lens === "all" ? "none" : this.glowFor(lensDef.dot,1) },
+      showBackToLayout: s.lens === "trending",
+      showRotate: s.tier !== "overview" && !isChildLevel,
+      rotateLabel: (12 - count) + " more",
+      sheet, treeRows,
+      typeOptions: ["topic","link","note","image","date"].map((t,i) => ({ t, b: i===0 ? "#A3E635" : "#22253A",
+        bg: i===0 ? "rgba(163,230,53,.12)" : "#161930", fg: i===0 ? "#EDEEF7" : "#8C8FA8" })),
+      familySwatches: Object.keys(FAM).map((k,i) => ({ c:FAM[k].c, wash:rgba(FAM[k].c,.10),
+        glow: i===0 ? this.glowFor(FAM[k].c,2) : "none" })),
+      notify: s.notified
+        ? { label:"We'll tell you · you're on the list", bg:"rgba(45,212,191,.12)", border:"#2DD4BF", glow:this.glowFor("#2DD4BF",1) }
+        : { label:"Notify me when this opens", bg:"rgba(255,138,61,.12)", border:"#FF8A3D", glow:this.glowFor("#FF8A3D",1) },
+      relatedLive: NODES.filter(n => n.status === "live").slice(0,3).map(n => ({ t:n.label, c:FAM[n.fam].c,
+        tap: () => this.openSheet(n) })),
+      tabs: tabDef.map(([t,icn,key]) => { const on = s.screen === key || (key === "maps" && s.screen === "editor")
+          || (key === "map" && s.screen === "entry");
+        return { t, ...ico(icn), c: on ? "#2FD9F5" : "#5A5E7C", tap: () => this.setState({ screen:key, tab:key, sheet:null, overlay:null }) }; }),
+      query: { text: s.query || "Search nodes, maps, people, pages", color: s.query ? "#EDEEF7" : "#5A5E7C" },
+      hasQuery: !!s.query, noQuery: !s.query,
+      clearQuery: () => this.setState({ query:"" }),
+      filters: ["All","Live only","Create","Discover"].map((t,i) => ({ t, b: i<2 ? "#2FD9F5" : "#22253A",
+        bg: i<2 ? "rgba(47,217,245,.12)" : "#161930", fg: i<2 ? "#EDEEF7" : "#8C8FA8" })),
+      results, resultMap,
+      resultsAsList: s.resultMode === "list", resultsAsMap: s.resultMode === "map",
+      resultToggle: s.resultMode === "list" ? "SEE AS MAP" : "SEE AS LIST",
+      toggleResultMode: () => this.setState({ resultMode: s.resultMode === "list" ? "map" : "list" }),
+      recents: ["patent","studio os","invoice #218"].map(t => ({ t, tap: () => this.setState({ query:"patent" }) })),
+      suggestions: [["Mind Mapping","CDN › Create","NODE","create"],["Studio OS","CDN › My Maps","MAP","create"],
+        ["Build With Us","CDN › Services","NODE","services"],["Page Watcher","CDN › Discover","NODE","discover"],
+        ["Ife Okonkwo","CDN › People","PERSON","people"]]
+        .map(([t,path,group,f]) => ({ t, path, group, c:FAM[f].c, g:rgba(FAM[f].c,.5), tap: () => this.setState({ query:"patent" }) })),
+      openLinkToMap: () => { this.setState({ screen:"map", tab:"map", query:"" }); this.openSheet(NODES[1]); },
+      mapTabs: [["Mine","mine"],["Shared with me","shared"]].map(([t,k]) => ({ t,
+        bg: s.mapTab === k ? "#161930" : "transparent", fg: s.mapTab === k ? "#EDEEF7" : "#8C8FA8",
+        tap: () => this.setState({ mapTab:k }) })),
+      mapCards: (s.mapTab === "mine"
+        ? [["Studio OS","create","Edited 12 min ago · 24 nodes","24","PRIVATE","#8B5CF6"],
+           ["Patent research","discover","Edited yesterday · 18 nodes","18","LINK","#2FD9F5"],
+           ["Q4 positioning","services","Edited 3 days ago · 11 nodes","11","PUBLIC","#2DD4BF"]]
+        : [["Atlas rebrand","people","Owned by Dana · you are Editor","16","SHARED","#FF4D97"],
+           ["Growth stack","commerce","Owned by Ife · you are Viewer","9","SHARED","#2DD4BF"]]
+        ).map(([t,f,meta,nodes,vis,visB]) => ({ t, meta, nodes, vis, visB, c:FAM[f].c,
+          ring:`linear-gradient(140deg,${FAM[f].c},${rgba(FAM[f].c,.15)})`, g:rgba(FAM[f].c,.35),
+          open: () => this.setState({ screen:"editor", sheet:null }) })),
+      editNodes: [[0,-118],[112,-40],[70,104],[-70,104],[-112,-40]].map(([x,y],i) => {
+        const t = ["Positioning","Offer","Website","Team","Pricing"][i];
+        return { x, y, t, ...ico(["spark","bag","code","users","card"][i]),
+          glow: this.glowFor("#A3E635", 1), scale:1,
+          tap: () => this.setState({ sheet:{ node:{ n:i+1, t, fam:"create", icon:"note", status:"live", type:"note",
+            desc:"A node in your own map. Title, type, family colour and link are editable here.", child:true }, mode:"edit" } }) };
+      }),
+      editEdges: [[0,-118],[112,-40],[70,104],[-70,104],[-112,-40]].map(([x,y]) => {
+        const L = Math.hypot(x,y), ux = x/L, uy = y/L;
+        return { x1:195+ux*48, y1:288+uy*48, x2:195+x-ux*27, y2:288+y-uy*27 };
+      }),
+      editTools: [ico("undo"), ico("connect"), ico("chat")],
+      exitEditor: () => this.setState({ screen:"maps", sheet:null }),
+      addNode: () => this.setState({ sheet:{ node:{ n:6, t:"New node", fam:"create", icon:"note", status:"live",
+        type:"topic", desc:"Name it, choose a type, and it slots into the next free angular position.", child:true }, mode:"edit" } }),
+      youStats: [{v:"5",k:"MAPS",c:"#A3E635"},{v:"78",k:"NODES",c:"#2FD9F5"},{v:"2",k:"SHARED",c:"#FF8A3D"}],
+      accountRows: [{t:"Notifications",v:"3 new"},{t:"Saved items",v:"12"},{t:"Public profile",v:"@amara"}],
+      settingRows: [{t:"Privacy defaults",v:"Private"},{t:"Appearance",v:"Neon dark"},{t:"Motion",v:"Reduced off"},{t:"Blocked users",v:"0"}],
+      templates: [["Blank","One centre node"],["Project","Board + phases"],["Research","Sources + notes"],["Business","Offer + market"]]
+        .map(([t,m],i) => ({ t, m, b: i===0 ? "#A3E635" : "#22253A" })),
+      showNewMap: s.overlay === "newmap", showMenu: s.overlay === "menu",
+      menuItems: [["Central Node","#8B5CF6","map"],["Search","#2FD9F5","search"],["My Maps","#A3E635","maps"],
+        ["Notifications","#FF4D97","you"],["Settings","#2DD4BF","you"]]
+        .map(([t,c,k]) => ({ t, c, tap: () => this.setState({ screen:k, tab:k, overlay:null, sheet:null }) })),
+      dsNeutrals: [{hex:"#000000",role:"map ground"},{hex:"#07070C",role:"app bg"},{hex:"#0D0E17",role:"surface"},
+        {hex:"#161930",role:"raised"},{hex:"#22253A",role:"border"},{hex:"#EDEEF7",role:"ink"},{hex:"#8C8FA8",role:"muted"}],
+      dsFamilies: Object.keys(FAM).map(k => ({ name:FAM[k].name, c:FAM[k].c, wash:rgba(FAM[k].c,.10),
+        glow:this.glowFor(FAM[k].c,1) })),
+      dsGlow: [
+        { t:"Available", token:"--glow-1", c:"#2FD9F5", fill:rgba("#2FD9F5",.08), stroke:"solid", glow:this.glowFor("#2FD9F5",1) },
+        { t:"Active", token:"--glow-2", c:"#A3E635", fill:rgba("#A3E635",.08), stroke:"solid", glow:this.glowFor("#A3E635",2) },
+        { t:"Selected", token:"--glow-3", c:"#FF4D97", fill:rgba("#FF4D97",.08), stroke:"solid", glow:this.glowFor("#FF4D97",3) },
+        { t:"Coming Soon", token:"--glow-0 + dashed", c:"#FF8A3D", fill:"rgba(13,14,23,.6)", stroke:"dashed", glow:"none" }
+      ],
+      dsControls: [ico("plus"), ico("minus"), ico("target")],
+      dsMotion: [{t:"Node expand",v:"260ms · 25ms stagger"},{t:"Collapse",v:"200ms"},{t:"Camera / recentre",v:"420ms"},
+        {t:"Sheet",v:"280ms spring .82"},{t:"Selection",v:"140ms ease-out"},{t:"Root breathe",v:"4s ±4% (root only)"}],
+      enter: () => this.setState({ screen:"map" }),
+      goSearch: () => this.setState({ screen:"search", tab:"search", sheet:null, overlay:null }),
+      openMenu: () => this.setState({ overlay:"menu" }),
+      openNewMap: () => this.setState({ overlay:"newmap" }),
+      createMap: () => this.setState({ overlay:null, screen:"editor" }),
+      toggleView: () => this.setState({ view: s.view === "map" ? "tree" : "map" }),
+      cycleLens: () => { const i = LENSES.findIndex(l => l.k === s.lens); this.setState({ lens: LENSES[(i+1)%LENSES.length].k }); },
+      resetLens: () => this.setState({ lens:"all" }),
+      rotateRing: () => this.setState({ offset: (s.offset + 4) % NODES.length }),
+      zoomIn: () => this.setState({ tier: s.tier === "overview" ? "default" : "detail" }),
+      zoomOut: () => this.setState({ tier: s.tier === "detail" ? "default" : "overview" }),
+      recentre: () => this.setState({ path:[], focus:null, sheet:null, tier:"default", offset:0 }),
+      layerOut: () => this.setState({ path: s.path.slice(0,-1), focus:null, sheet:null }),
+      layerIn: () => { const f = NODES.find(n => n.n === s.focus); if (f && f.children) this.setState({ path:[f.n], sheet:null }); },
+      tapRoot: () => this.setState({ path:[], focus:null, sheet:null }),
+      tapFab: () => this.setState({ overlay:"newmap" }),
+      openNode: () => { const nd = sheetNode; this.setState({ sheet:null });
+        if (nd && nd.n === 1) this.setState({ screen:"maps", tab:"maps" });
+        else if (nd && nd.children) this.setState({ path:[nd.n] }); },
+      expandNode: () => { const nd = sheetNode; if (nd && nd.children) this.setState({ path:[nd.n], sheet:null, tier:"default" }); },
+      notifyMe: () => this.setState({ notified:true }),
+      closeSheet: () => this.setState({ sheet:null, overlay:null, focus:null }),
+      motionOn
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+/*
+ * Screen 01 — the entry transition.
+ *
+ * A CSS module rather than styled-components, and deliberately so: this screen
+ * renders before hydration and must not depend on a client component, because
+ * its whole job is to be on screen instantly while ring-one map data loads
+ * behind it. styled-components would inject its styles from JavaScript, which
+ * is exactly the dependency this screen cannot have.
+ *
+ * Composition ported from the design canvas, screen "01 Entry". Values that
+ * exist as tokens use the token; the handful that are specific to this one
+ * screen (the deeper-than-app background, the two atmosphere washes, the
+ * constellation strokes) are written literally and commented, because
+ * promoting a one-screen value into `tokens.json` makes it look reusable.
+ */
+
+.page {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+
+  /*
+   * #05060B, not --ground-background. The entry screen sits one step deeper
+   * than the app so the ring reads as the only light source in the frame.
+   */
+  background: #05060b;
+}
+
+/* The two atmosphere washes: violet low and centred, cyan high and left. */
+.atmosphere {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      360px 260px at 50% 74%,
+      rgba(139, 92, 246, 0.2),
+      transparent 72%
+    ),
+    radial-gradient(
+      300px 220px at 22% 18%,
+      rgba(47, 217, 245, 0.07),
+      transparent 70%
+    );
+}
+
+/*
+ * The constellation along the bottom edge.
+ *
+ * `preserveAspectRatio="none"` in the markup lets it stretch to any width
+ * without rescaling its height, so the lines stay hairline on a tablet.
+ */
+.constellation {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 200px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/*
+ * The whole screen is the target.
+ *
+ * The canvas puts `onClick` on the screen container. A div with a click
+ * handler is invisible to a keyboard and to a screen reader, so this is a real
+ * link with a real accessible name — same behaviour, same visuals, and it
+ * works for someone who never touches a pointer.
+ */
+.enter {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 52px var(--space-4) var(--space-12);
+  box-sizing: border-box;
+
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.enter:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -4px;
+}
+
+/* ------------------------------------------------------------------ the ring */
+
+.ring {
+  position: relative;
+  flex: none;
+
+  /*
+   * 286px on the 390px canvas. `min()` keeps the ring off the edges on a
+   * 320px phone, which the fixed value would not.
+   */
+  width: min(286px, 78vw);
+  aspect-ratio: 1;
+
+  border-radius: 50%;
+  padding: 3px;
+  box-sizing: border-box;
+
+  /* Every family hue in order, so the ring is the whole network at once. */
+  background: conic-gradient(
+    from 200deg,
+    #2fd9f5,
+    #3b82f6,
+    #8b5cf6,
+    #c026d3,
+    #ff4d97,
+    #ff8a3d,
+    #ffb020,
+    #2dd4bf,
+    #2fd9f5
+  );
+  box-shadow: 0 0 44px rgba(139, 92, 246, 0.5);
+}
+
+.ringInner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  /* Off-centre highlight: the light sits above the wordmark, not behind it. */
+  background: radial-gradient(circle at 50% 40%, #0a0a14, #000 76%);
+}
+
+.mark {
+  margin-bottom: 12px;
+  filter: drop-shadow(0 0 5px rgba(192, 38, 211, 0.85));
+}
+
+/* --------------------------------------------------------------- the wordmark */
+
+.wordmark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+}
+
+/*
+ * The three words in the three anchor hues.
+ *
+ * Brand colours at display weight and size on near-black, which is where they
+ * pass contrast. Body copy never uses them (§11.1).
+ */
+.word {
+  font-family: var(--face-display);
+  font-size: clamp(21px, 7.2vw, 28px);
+  font-weight: 700;
+  letter-spacing: 2.4px;
+  line-height: 1.18;
+}
+
+.creative {
+  color: #2fd9f5;
+  text-shadow: 0 0 16px rgba(47, 217, 245, 0.6);
+}
+
+.design {
+  color: #8b5cf6;
+  text-shadow: 0 0 16px rgba(139, 92, 246, 0.6);
+}
+
+.networks {
+  color: #ff8a3d;
+  text-shadow: 0 0 16px rgba(255, 138, 61, 0.6);
+}
+
+.tagline {
+  margin: 11px 0 0;
+  font-family: var(--face-body);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 4.6px;
+  color: #9fa3b8;
+}
+
+/* ------------------------------------------------------------------ the prompt */
+
+.prompt {
+  position: relative;
+  margin-top: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.promptText {
+  font-family: var(--face-display);
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: 3.4px;
+  color: var(--ground-ink);
+}
+
+.hand {
+  filter: drop-shadow(0 0 6px rgba(139, 92, 246, 0.8));
+}
+
+/*
+ * The one ambient movement on the screen, and it is on the hand only — the
+ * thing being asked of the user. The ring does not pulse: a breathing logo
+ * next to a breathing prompt gives the eye nowhere to settle.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .hand {
+    animation: entryNudge 2600ms ease-in-out infinite;
+  }
+}
+
+@keyframes entryNudge {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
