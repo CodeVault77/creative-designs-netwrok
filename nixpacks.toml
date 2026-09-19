@@ -1,0 +1,33 @@
+# Railway build config.
+#
+# ── Why this file exists ─────────────────────────────────────────────────
+#
+# Nixpacks' own auto-detection read `engines.node: ">=20.19.0"` in
+# package.json as "any version is fine" and picked the newest one in its nix
+# channel (Node 24) rather than the exact version `.nvmrc` pins (20.19.0).
+# That alone would probably have been survivable, except the next problem
+# compounds it: `better-sqlite3` is a native module, ships prebuilt binaries
+# for the common LTS Node versions, and Node 24 is new enough that no
+# prebuilt binary exists for it yet — so npm fell back to compiling from
+# source with node-gyp, which then failed because the build image has no
+# Python installed at all.
+#
+# Pinning the exact Node version AND ensuring Python is present fixes both
+# failure modes at once: the right Node version means a prebuilt binary is
+# very likely to exist and no compile is needed; Python being present means
+# that even if no prebuilt binary matches, the source-compile fallback can
+# actually run instead of failing immediately on a missing interpreter.
+
+[phases.setup]
+# nixPkgs names Nix's own package attributes, not npm packages — nodejs_20
+# is nixpkgs' Node 20.x, matching .nvmrc's 20.19.0.
+nixPkgs = ["nodejs_20", "python3"]
+
+[phases.install]
+cmds = ["npm ci"]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "npm run start"
