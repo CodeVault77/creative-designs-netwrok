@@ -5,6 +5,7 @@ import { drawGlow, type GlowLevel } from './glowSprites';
 import { renderingFor, truncate, type ZoomTier } from './zoomTiers';
 import { BRAND_MARK, ICON_VIEWBOX, iconPathsFor } from './icons';
 import { DESKTOP_BREAKPOINT } from './geometry';
+import { defaultIconFor } from '@/lib/nodes/registry';
 import type { Edge, PlacedNode, Viewport } from './types';
 
 /**
@@ -368,9 +369,23 @@ function drawNode(
    * separate lime from cyan.
    */
   if (!item.cluster && rendering.showIcon) {
+    /*
+     * Falls back to the TYPE's default glyph when the node carries none of
+     * its own.
+     *
+     * `node.icon` is unset on every node until someone visits the icon
+     * picker specifically — choosing a type alone (topic → task, say) never
+     * touched it. Passing the raw, usually-undefined field straight to
+     * `drawIcon` meant that was the common case, not an edge case: almost
+     * every node anyone had ever typed drew an empty ring, silently, because
+     * `iconPathsFor(undefined)` returns nothing and `drawIcon` then draws
+     * nothing. `defaultIconFor` is the registry's own answer to "what should
+     * this type look like unless told otherwise" — it already existed and
+     * was already correct; nothing here had ever called it.
+     */
     drawIcon(
       ctx,
-      item.node.icon,
+      item.node.icon ?? defaultIconFor(item.node.type),
       screen.x,
       screen.y,
       radius,

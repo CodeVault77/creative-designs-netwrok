@@ -5,6 +5,7 @@ import { transition } from '@/lib/styles/motion';
 import { MVP_NODE_TYPES, SOON_NODE_TYPES } from '@/lib/editor/types';
 import { tokens, type FamilyName } from '@/lib/styles/tokens.generated';
 import type { NodeType } from '@/lib/map/types';
+import { icons, ICON_VIEWBOX, type IconName } from '@/lib/map/icons';
 
 /**
  * TypePicker, ColorFamilyPicker, IconPicker.
@@ -254,31 +255,80 @@ export function ColorFamilyPicker({
 // ------------------------------------------------------------------ IconPicker
 
 /**
- * A small, deliberately finite set.
+ * The real icon set — `map/icons.ts`, the same names the canvas renderer
+ * draws.
  *
- * An icon search over a thousand glyphs is a bigger feature than the whole
- * node editor, and a map where every node has a different icon is less
- * readable than one where none do. Sixteen is enough to distinguish branches
- * and few enough to scan.
+ * This used to be sixteen plain unicode characters (★, ✦, ▲…) with no
+ * relationship to that set at all. A node could be given `icon: '★'`, the
+ * save would succeed, and the map would draw NOTHING for it: the renderer's
+ * `iconPathsFor` only recognises the named keys below, an unrecognised name
+ * returns no paths by design (see that file's own comment — a wrong icon is
+ * worse than no icon), and there is no character in that old list that
+ * happens to match a real key. Every icon anyone had ever picked through
+ * this control was silently invisible on the actual map.
+ *
+ * `Object.keys(icons)` rather than a second hand-typed list, for the reason
+ * this file keeps relearning: a name added to `icons.ts` and not to a copy
+ * here is exactly how that happened in the first place.
  */
-export const NODE_ICONS = [
-  '◎',
-  '★',
-  '✦',
-  '❋',
-  '▲',
-  '■',
-  '●',
-  '◆',
-  '↗',
-  '✓',
-  '!',
-  '?',
-  '♥',
-  '⚑',
-  '⌘',
-  '∞',
-] as const;
+const ICON_NAMES = Object.keys(icons) as IconName[];
+
+/**
+ * Display names for the picker. `Record<IconName, string>` rather than a
+ * `.map(capitalise)` — TypeScript refuses to compile this object literal if
+ * `icons.ts` ever gains a key with no matching label here, which is the
+ * property that stopped the label and glyph maps in `TYPE_LABELS` above from
+ * drifting after `packages.ts` shipped.
+ */
+const ICON_LABELS: Record<IconName, string> = {
+  map: 'Map',
+  link: 'Link',
+  eye: 'Eye',
+  code: 'Code',
+  layers: 'Layers',
+  users: 'People',
+  bag: 'Bag',
+  spark: 'Spark',
+  bulb: 'Idea',
+  cal: 'Calendar',
+  card: 'Card',
+  heart: 'Heart',
+  file: 'File',
+  note: 'Note',
+  search: 'Search',
+  grid: 'Grid',
+  user: 'Person',
+  connect: 'Connect',
+  chat: 'Chat',
+};
+
+/**
+ * One icon's paths, drawn small — the SAME path data `Path2D` strokes on the
+ * canvas, so what this button shows is what the node will actually look
+ * like, rather than a stand-in that might not match.
+ */
+function IconGlyph({ name }: { name: IconName }) {
+  return (
+    <svg
+      width={18}
+      height={18}
+      viewBox={`0 0 ${ICON_VIEWBOX} ${ICON_VIEWBOX}`}
+      fill="none"
+      aria-hidden="true"
+    >
+      {icons[name].map((d) => (
+        <path
+          key={d}
+          d={d}
+          stroke="currentColor"
+          strokeWidth={1.8}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      ))}
+    </svg>
+  );
+}
 
 export function IconPicker({
   value,
@@ -292,7 +342,7 @@ export function IconPicker({
   return (
     <Group>
       <Legend>Icon</Legend>
-      <Grid $columns={8}>
+      <Grid $columns={6}>
         <Option
           type="button"
           $selected={!value}
@@ -301,27 +351,25 @@ export function IconPicker({
           aria-pressed={!value}
           aria-label="No icon"
           title="No icon"
-          style={{ minHeight: 40 }}
         >
           <span aria-hidden="true" style={{ color: 'var(--ground-muted)' }}>
             —
           </span>
+          Default
         </Option>
 
-        {NODE_ICONS.map((icon) => (
+        {ICON_NAMES.map((name) => (
           <Option
-            key={icon}
+            key={name}
             type="button"
-            $selected={value === icon}
-            onClick={() => onChange(icon)}
+            $selected={value === name}
+            onClick={() => onChange(name)}
             disabled={disabled}
-            aria-pressed={value === icon}
-            aria-label={`Icon ${icon}`}
-            style={{ minHeight: 40 }}
+            aria-pressed={value === name}
+            title={ICON_LABELS[name]}
           >
-            <span aria-hidden="true" style={{ fontSize: 16 }}>
-              {icon}
-            </span>
+            <IconGlyph name={name} />
+            {ICON_LABELS[name]}
           </Option>
         ))}
       </Grid>

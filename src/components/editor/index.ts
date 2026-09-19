@@ -14,4 +14,4 @@ export { SaveIndicator } from './SaveIndicator';
 export { UndoBar, UNDO_WINDOW_MS, type UndoBarProps } from './UndoBar';
 export { NodeEditor, type NodeEditorProps } from './NodeEditor';
 export { NewMapForm } from './NewMapForm';
-export { TypePicker, ColorFamilyPicker, IconPicker, NODE_ICONS } from './pickers';
+export { TypePicker, ColorFamilyPicker, IconPicker } from './pickers';
