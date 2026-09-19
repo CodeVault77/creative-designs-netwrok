@@ -1,0 +1,45 @@
+name: Drain job queue
+
+# Calls POST /api/jobs/drain on a schedule.
+#
+# There is deliberately no scheduler INSIDE the Next.js server — see the
+# comment on that route (src/app/api/jobs/drain/route.ts): a `setInterval`
+# in a server process is unsupervised and invisible, and a scheduler calling
+# in from outside is observable, restartable, and works the same on every
+# host. This workflow is that scheduler.
+#
+# Without it, queued email and webhook deliveries sit in the outbox forever.
+# Nothing else in the app depends on this running — it only affects mail and
+# outbound webhooks.
+
+on:
+  schedule:
+    # Every 5 minutes. GitHub Actions cron is best-effort and can slip during
+    # high load on their end, which is fine here — a delayed email is a much
+    # smaller problem than a missed one.
+    - cron: '*/5 * * * *'
+  # Lets you trigger a drain by hand from the Actions tab, without waiting
+  # for the next scheduled tick — useful right after setting this up.
+  workflow_dispatch:
+
+jobs:
+  drain:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call the drain endpoint
+        run: |
+          status=$(curl -s -o /tmp/response.json -w "%{http_code}" \
+            -X POST "${SITE_URL}/api/jobs/drain" \
+            -H "Authorization: Bearer ${JOB_RUNNER_TOKEN}")
+
+          echo "HTTP status: $status"
+          cat /tmp/response.json
+          echo
+
+          if [ "$status" -ge 300 ]; then
+            echo "Drain call failed with status $status"
+            exit 1
+          fi
+        env:
+          SITE_URL: ${{ secrets.CDN_SITE_URL }}
+          JOB_RUNNER_TOKEN: ${{ secrets.CDN_JOB_RUNNER_TOKEN }}
